@@ -1,0 +1,4 @@
+[21-Jun-2022 16:26:16 UTC] PHP Fatal error:  Uncaught Error: Class 'Illuminate\Foundation\Console\Kernel' not found in /home/cdapp/trading.cdapp.in/app/Console/Kernel.php:8
+Stack trace:
+#0 {main}
+  thrown in /home/cdapp/trading.cdapp.in/app/Console/Kernel.php on line 8
