@@ -22,7 +22,7 @@ class DashboardController extends Controller
 
             $item= Product::count();
             $usercount= User::count();
-            $newitem = Product::select('id','name','brand','image')->orderBy('created_at','DESC')->take(5)->get();
+            $newitem = Product::select('id','name','brand','image','product_code')->orderBy('created_at','DESC')->take(5)->get();
             $users=User::select('id','name','mobile','created_at')->orderBy('created_at','DESC')->take(4)->get();
 
             return view('pages.dashboard',compact('users','usercount','newitem','item')); 

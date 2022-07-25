@@ -21,7 +21,12 @@ class VendorController extends Controller
      */
     public function index(Request $request)
     {
-        $vendors = Vendor::where('id', '!=', 0)->orderBy('created_at','DESC')->paginate(10);
+        if($request->search!=''){
+             $vendors = Vendor::where('first_name','like', '%'.$request->search.'%')->paginate(10);
+        }
+        else{
+            $vendors = Vendor::where('id', '!=', 0)->orderBy('created_at','DESC')->paginate(10);
+        }
         return view('partner.index',compact('vendors'));
     }
 
@@ -74,9 +79,9 @@ class VendorController extends Controller
                         ->withInput();
             }
 
-            $request['first_name']=ucfirst(strtolower(trans($request->first_name)));
+            $request['first_name']=ucfirst($request->first_name);
             if($request->middle_name!=''){
-            $request['middle_name']=ucfirst(strtolower(trans($request->middle_name)));
+            $request['middle_name']=ucfirst(trans($request->middle_name));
             }
             
             //return $request->last_name;
@@ -87,7 +92,7 @@ class VendorController extends Controller
             }
             else if($request->last_name!="NA" || "Na" || "na"){
                 //return 'p';
-                $request['last_name']=ucfirst(strtolower(trans($request->last_name)));
+                $request['last_name']=ucfirst($request->last_name);
                 
             }
         
@@ -135,8 +140,16 @@ class VendorController extends Controller
         $request['user_id']=auth()->user()->id;
 
         $lastfetch=Vendor::select('id')->orderBy('created_at','DESC')->first();
+
+        if(isset($lastfetch))
+            {
+                $request['vendor_code'] = 'SP'.str_pad($lastfetch->id + 1, 6, "0", STR_PAD_LEFT);
+            }
+            else{
+                $request['vendor_code'] = 'SP'.str_pad(1, 6, "0", STR_PAD_LEFT);
+            }
             
-            $vendorCode1 = "SP00000";
+            /*$vendorCode1 = "SP00000";
             if($lastfetch->id==NULL)
             {
                  $vendorCode2 = 1;
@@ -148,7 +161,7 @@ class VendorController extends Controller
             }
             $vendorCode2 = $lastfetch->id + 1;
             $vendorCode = $vendorCode1.$vendorCode2;
-            $request['vendor_code']=$vendorCode;
+            $request['vendor_code']=$vendorCode;*/
 
            // return $request;
             //$cat =Category::where('name',$request->category_id)->select('id')->first();
@@ -177,6 +190,15 @@ class VendorController extends Controller
         {
             return \Response::json(["status"=>"error", "message"=> $e->getMessage()]);
         }
+    }
+
+    public function vendorsearch(Request $request){
+       //return $request;
+        if($request->get('query')!=''){
+             $query = $request->get('query');
+                $searchcategory = Vendor::where('first_name','like', '%'.$query.'%')->select('id','first_name as name')->get();
+        }
+        return response()->json($searchcategory);
     }
 
     public function categorysearch(Request $request){

@@ -53,7 +53,7 @@ class ItemController extends Controller
        //return $request;
         if($request->get('query')!=''){
              $query = $request->get('query');
-                $searchcategory = $this->items->where('name','like', '%'.$query.'%')->select('id','name','available','price')->get();
+                $searchcategory = $this->products->where('name','like', '%'.$query.'%')->select('id','name')->get();
         }
         return response()->json($searchcategory);
     }
@@ -214,6 +214,15 @@ class ItemController extends Controller
                 //$request['image']= $file_name;
                 return $data['image'] = $file_name;
                 
+    }
+
+    public function brandsearch(Request $request){
+        //return $request;
+        if($request->get('query')!=''){
+              $query = $request->get('query');
+                $search= $this->products->where('brand','like', '%'.$query.'%')->select('id','brand as name')->get();
+        }
+        return response()->json($search);
     }
 
     /**

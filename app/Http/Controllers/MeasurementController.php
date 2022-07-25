@@ -20,8 +20,8 @@ class MeasurementController extends Controller
      */
     public function index(Request $request)
     {
-       if($request->name!=''){
-            $measurements= $this->measurements->where('name','like', '%'.$request->name.'%')->select('id','name')->orderBy('created_at','DESC')->paginate(10); 
+       if($request->search!=''){
+            $measurements= $this->measurements->where('name','like', '%'.$request->search.'%')->select('id','name')->orderBy('created_at','DESC')->paginate(10); 
         }
         else{
             $measurements= $this->measurements->select('id','name')->orderBy('created_at','DESC')->paginate(10);

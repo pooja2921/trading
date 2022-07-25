@@ -248,6 +248,18 @@
                                     <div class="help-block with-errors"></div>
                                 </div>
 
+                                <div class="form-group">
+                                        <label for="password">{{ __('Password')}}<span class="text-red">*</span></label>
+                                        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" placeholder="Enter password" required>
+                                        <div class="help-block with-errors"></div>
+
+                                        @error('password')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
+                                </div>
+
                 
                                         <div class="form-group">
                                             <label for="altemail">Alternate Email</label>
@@ -258,23 +270,36 @@
                     
                            
                                 <div class="form-group">
-                                    <label for="mobile">Mobile No.<span class="text-red">*</span></label><br>
-                                    <input type="hidden" name="coun_code" id="count_code">
-                                     <input type="tel" id="number" class="form-control" name="mobile" value="{{isset($vendor->mobile)  ? $vendor->mobile:'' }}" required> 
-                                    
-                                    <span id="lblError" style="color: red"></span>
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                            <label for="mobile">Mobile No.<span class="text-red">*</span></label><br>
+                                            <input type="hidden" name="coun_code" id="count_code">
+                                             <input type="tel" id="number" class="form-control" name="mobile" value="{{isset($vendor->mobile)  ? $vendor->mobile:'' }}" required> 
+                                            
+                                            <span id="lblError" style="color: red"></span>
+                                        </div>
+                                        <div class="col-md-6">
+                                        
+                                                <label for="altmobile">Alternate Mobile No.</label><br>
+                                                <input type="hidden" name="altcount_code" id="altcount_code">
+                                                 <input type="tel" id="altmobile" class="form-control" name="mobilealt" value="{{isset($vendor->altmobile)  ? $vendor->altmobile:'' }}"> 
+                                               
+                                                <span id="altmblError" style="color: red"></span>
+                                                
+                                        </div>
+                                    </div>
                                     
                                 </div>
 
                             
-                                    <div class="form-group">
+                                    {{--<div class="form-group">
                                             <label for="altmobile">Alternate Mobile No.</label><br>
                                             <input type="hidden" name="altcount_code" id="altcount_code">
                                              <input type="tel" id="altmobile" class="form-control" name="mobilealt" value="{{isset($vendor->altmobile)  ? $vendor->altmobile:'' }}"> 
                                            
                                             <span id="altmblError" style="color: red"></span>
                                             
-                                    </div>
+                                    </div>--}}
                     
 
                                 
@@ -998,16 +1023,16 @@ $('#progroup').change(function() {
             }
         });
 
-        $('.procategory').change(function() { 
+        $('.subcat').change(function() { 
             //console.log('gfbhngfgfh');
-            var sub=$(".procategory :selected").map((_, e) => e.value).get();
+            var sub=$(".subcat :selected").map((_, e) => e.value).get();
             console.log(sub);
             var publicurl= $('.subcat').data('url');
             //console.log(publicurl);
             if(sub!=''){
 
                 $.ajax({
-                    url:publicurl+'/getsubcat/',
+                    url:publicurl+'/subcat',
                     type:'GET',
                     data:{'id':sub},
                     success:function(data){

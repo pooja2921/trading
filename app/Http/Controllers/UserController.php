@@ -23,10 +23,10 @@ class UserController extends Controller
     public function index(Request $request)
     {
         if($request->name!=''){
-            $users= User::where('name','like', '%'.$request->name.'%')->select('id','name','email')->with('roles', 'permissions')->paginate(10); 
+            $users= User::where('name','like', '%'.$request->name.'%')->select('id','name','email','user_code')->with('roles', 'permissions')->paginate(10); 
         }
         else{
-             $users= User::select('id','name','email')->with('roles', 'permissions')->paginate(10);
+             $users= User::select('id','name','email','user_code')->with('roles', 'permissions')->paginate(10);
         }
         //return $userpermission= $users->getAllPermissions();
         //$data= User::with('roles', 'permissions')->get();
@@ -44,6 +44,19 @@ class UserController extends Controller
                 $usersearch = User::where('name','like', '%'.$query.'%')->select('id','name')->get();
         }
         return response()->json($usersearch);
+    }
+
+    public function profile(){
+        //return 'hffgf';
+        $userid= auth()->user()->id;
+        $user=User::where('id',$userid)->first();
+        return view('profile',compact('user'));
+    }
+
+    public function updateuser(Request $request){
+        //return $request;
+        User::where('id',$request->id)->update($request->except('_token'));
+        return redirect()->back();
     }
 
     /**
@@ -121,11 +134,37 @@ class UserController extends Controller
     public function store(UserRequest $request)
     {
         try {
+            //return $request;
+            $lastfetch=User::select('id')->orderBy('created_at','DESC')->first();
+            if(isset($lastfetch))
+            {
+                $request['user_code'] = 'TM'.str_pad($lastfetch->id + 1, 6, "0", STR_PAD_LEFT);
+            }
+            else{
+                $request['user_code'] = 'TM'.str_pad(1, 6, "0", STR_PAD_LEFT);
+            }
+            //return $request['user_code'];
+            /*$lastfetch=User::select('id')->orderBy('created_at','DESC')->first();
+            
+            $clientCode1 = "TM00000";
+            if($lastfetch->id==NULL)
+            {
+                 $clientCode2 = 1;
+               
+            }
+            else
+            {
+               $clientCode2 = $lastfetch->id + 1;
+            }
+            $clientCode2 = $lastfetch->id + 1;
+            $clientCode = $clientCode1.$clientCode2;
+            $request['user_code']=$clientCode;*/
             // store user information
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => $request->password,
+                'user_code'=> $request->user_code,
             ]);
 
 

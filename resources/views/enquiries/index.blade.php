@@ -55,18 +55,7 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header row">
-                        <div class="col col-sm-1">
-                            <div class="card-options d-inline-block">
-                                <div class="dropdown d-inline-block">
-                                    <a class="nav-link dropdown-toggle" href="#" id="moreDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="ik ik-more-horizontal"></i></a>
-                                    <div class="dropdown-menu dropdown-menu-left" aria-labelledby="moreDropdown">
-                                        <a class="dropdown-item" href="#">Delete</a>
-                                        
-                                    </div>
-                                </div>
-                            </div>
-                            
-                        </div>
+                       
                         <div class="col col-sm-6">
                             <div class="card-search with-adv-search dropdown">
                                 <form action="{{route('client.index')}}" method="get">
@@ -113,8 +102,8 @@
                         </div>
                         <div class="col col-sm-5">
                             <div class="card-options text-right">
-                                <span class="mr-5" id="top">{{($enquiries>currentpage()-1)*$enquiries>perpage()+1}} to {{$enquiries>currentpage()*$enquiries>perpage()}}
-                                            of  {{$enquiries>total()}} entries</span>
+                                <span class="mr-5" id="top">{{($enquiries->currentpage()-1)*$enquiries->perpage()+1}} to {{$enquiries->currentpage()*$enquiries->perpage()}}
+                                            of  {{$enquiries->total()}} entries</span>
                                 <a href="#"><i class="ik ik-chevron-left"></i></a>
                                 <a href="#"><i class="ik ik-chevron-right"></i></a>
                                 <a href="{{route('enquiry.create')}}" class=" btn btn-outline-primary btn-semi-rounded tradeadd"><i class="ik ik-plus"></i>&nbsp;Add Enquiry</a>
@@ -126,60 +115,43 @@
                         <table id="product_table" class="table">
                             <thead>
                                 <tr>
-                                    <th class="nosort" width="10">
-                                        <label class="custom-control custom-checkbox m-0">
-                                            <input type="checkbox" class="custom-control-input" id="selectall" name="" value="option2">
-                                            <span class="custom-control-label">&nbsp;</span>
-                                        </label>
-                                    </th>
-                                    <th>{{ __('Name')}}</th>
+                                    
+                                    <th>{{ __('Client Name')}}</th>
+                                    <th>{{ __('Enquiry Code')}}</th>
                                     <th>{{ __('Email')}}</th>
-                                    <th>{{ __('Mobile')}}</th>
-                                    <th>{{ __('Status')}}</th>
                                     <th style="width: 90px;!important">{{ __('Action')}}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach($enquiries as $enquiry)
                                 <tr>
+                                    
+                                    <td>{{ isset($enquiry->contact_person) ? $enquiry->contact_person :'' }}</td>
                                     <td>
-                                        <label class="custom-control custom-checkbox">
-                                            <input type="checkbox" class="custom-control-input select_all_child" id="" name="" value="option2">
-                                            <span class="custom-control-label">&nbsp;</span>
-                                        </label>
+                                        {{ isset($enquiry->enquiry_no) ? $enquiry->enquiry_no :'' }}
                                     </td>
-                                    <td>{{ isset($enquiry->first_name) ? $enquiry->first_name :'' }}</td>
-                                    <td>{{ isset($client->email) ? $client->email :'' }}</td>
-                                    <td>
-                                       {{ isset($client->mobile) ? $client->mobile :'' }} 
-                                    </td>
-                                    <td>
-                                        <select class="form-control chngstatus" name="status" data-id="{{ isset($client->id) ? $client->id :'' }}" id="clientstatus" data-url="{{route('clientstatus',$client['id'])}}">
+                                    <td>{{ isset($enquiry->email_received_from) ? $enquiry->email_received_from :'' }}</td>
+                                    
+                                    <td>    
+                                        <a href="{{route('enquiry.edit', $enquiry->id) }}"  ><i class="ik ik-edit-2 f-16 mr-15 text-green"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
-                                            <option value="">Select Status</option> 
-                                            @if(isset($client->status) && $client->status==1 || $client->status== 0 )
-                               
-                                                <option value="1"  {{ ($client->status) == '1' ? 'selected' : '' }}>Active</option>
-
-                                                <option value="0" @if ($client->status == '0') {{ 'selected' }} @endif>Inactive</option>
-                                                        
-                                            @else
-
-                                                <option value="1">Active</option> 
-                                                <option value="0">Inactive</option>
-                                            @endif 
-                                        </select>
-                                    </td>
-                                    <td>
+                                        <a href="{{route('enquiry.show', $enquiry->id) }}"><i class="fa fa-paper-plane text-green"></i></a>
                                         
-                                        <a href="{{route('client.edit', $client->id) }}"  ><i class="ik ik-edit-2 f-16 mr-15 text-green"></i></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                                        <a href="javascript:;" class="deletebyid" data-id="{{ isset($client->id) ? $client->id:'' }}"  data-url="{{route('clientdelete',$client['id'])}}"><i class="ik ik-trash-2 f-16 text-red"></i></a>
                                     </td>
                                 </tr>
                                 @endforeach
 
                             </tbody>
                         </table>
+                        <div class="card-footer d-flex align-items-center">
+
+                                        <div class="col-md-6">
+                                        </div>
+                                        
+                                        <div class="col-md-6">
+                                        {{ $enquiries->links('include.pagination') }}
+                                        </div>
+                                </div>
                     </div>
                 </div>
             </div>

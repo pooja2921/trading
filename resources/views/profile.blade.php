@@ -1,4 +1,4 @@
-@extends('layouts.main') 
+@extends('inventory.layout') 
 @section('title', 'Profile')
 @section('content')
     
@@ -22,7 +22,7 @@
                                 <a href="{{route('dashboard')}}"><i class="ik ik-home"></i></a>
                             </li>
                             <li class="breadcrumb-item">
-                                <a href="#">{{ __('Pages')}}</a>
+                                <a href="#">{{ __('User')}}</a>
                             </li>
                             <li class="breadcrumb-item active" aria-current="page">{{ __('Profile')}}</li>
                         </ol>
@@ -103,10 +103,10 @@
                                         <label for="example-password">{{ __('Password')}}</label>
                                         <input type="password" class="form-control" name="password" id="example-password">
                                     </div>
-                                    <div class="form-group">
+                                    {{--<div class="form-group">
                                         <label for="example-phone">{{ __('Phone No')}}</label>
                                         <input type="text" placeholder="123 456 7890" id="example-phone" name="phone" class="form-control" value="{{ isset($user->phone) ? $user->phone:''}}">
-                                    </div>
+                                    </div>--}}
                                     
                                     
                                     <button class="btn btn-success" type="submit">Update Profile</button>

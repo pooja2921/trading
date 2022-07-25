@@ -72,7 +72,7 @@ class EnquiryController extends Controller
      */
     public function store(Request $request)
     {
-       // return $request;
+        //return $request;
         
         $request['created_by_id']=auth()->user()->id;
         
@@ -86,7 +86,20 @@ class EnquiryController extends Controller
             $request['enquiry_no'] = 'ENQ'.str_pad(1, 6, "0", STR_PAD_LEFT);
         }
 
-            
+            /*$clientCode1 = "ENQ00000";
+            if($lastfetch->id==NULL)
+            {
+                 $clientCode2 = 1;
+                
+            }
+            else
+            {
+               $clientCode2 = $lastfetch->id + 1;
+            }
+            $clientCode2 = $lastfetch->id + 1;
+            $clientCode = $clientCode1.$clientCode2;
+            $request['enquiry_no']=$clientCode;
+*/
             $request['UnqRngCode']=mt_rand(100000, 999999);
         
                // return $request;
@@ -97,27 +110,17 @@ class EnquiryController extends Controller
             for($i = 0; $i< count($request['quantity']); $i++)
             {
                 $enq['enquiry_id'] = $enquiry->id;
-                $enq['customer_product_description'] =  isset($request['customer_product_description'][$i]) ? $request['customer_product_description'][$i]:'';
-
-                $enq['customer_UOM'] = isset($request['customer_UOM'][$i]) ? $request['customer_UOM'][$i]:'';
-
-                $enq['quantity'] = isset($request['quantity'][$i]) ? $request['quantity'][$i]:'';
-
+                $enq['customer_product_description'] = $request['customer_product_description'][$i];
+                $enq['customer_UOM'] = $request['customer_UOM'][$i];
+                $enq['quantity'] = $request['quantity'][$i];
                 $enq['product_name'] = isset($request['product_name'][$i]) ? $request['product_name'][$i]:'';
-
-                $enq['product_id'] = isset($request['product_id'][$i]) ? $request['product_id'][$i]:'';
-
+                $enq['product_id'] = $request['product_id'][$i];
                 $enq['product_group_id'] = isset($request['product_group_id'][$i]) ? $request['product_group_id'][$i]:'';
-
                 $enq['product_category_id'] = isset($request['product_category_id'][$i]) ? $request['product_category_id'][$i]:'';
-
                 $enq['product_subcategory_id'] = isset($request['product_subcategory_id'][$i]) ? $request['product_subcategory_id'][$i]:'' ;
-
-                $enq['product_specification'] = isset($request['product_specification'][$i]) ? $request['product_specification'][$i]:'' ;
-
-                $enq['UOM'] = isset($request['UOM'][$i]) ? $request['UOM'][$i]:'' ;
-
-                $enq['image'] = isset($request['image'][$i]) ? $request['image'][$i]:'' ;
+                $enq['product_specification'] = $request['product_specification'][$i];
+                $enq['UOM'] = $request['UOM'][$i];
+                $enq['image'] = $request['image'][$i];
                 
                 //return $enq;
                 EnquiryItem::create($enq);
@@ -272,7 +275,7 @@ class EnquiryController extends Controller
 
     public function searchvendor(Request $request){
         //return $request;
-        $vendor= DB::table('vendors')->join('vendor_categories','vendor_categories.vendor_id','=','vendors.id')->whereIN('vendor_categories.product_group_id',$request->progroup)->orwhere('vendors.state_id',$request->state)->orwhere('vendors.city_id',$request->city)->select('vendors.id','vendors.first_name','vendors.vendor_code')->get();/*->orwhereIN('vendor_categories.product_category_id',$request->procat)->orwhereIN('vendor_categories.sub_category_id',$request->subcat)*/
+        $vendor= DB::table('vendors')->join('vendor_categories','vendor_categories.vendor_id','=','vendors.id')->where('vendors.state_id',$request->state)->orwhere('vendors.city_id',$request->city)->orwhereIN('vendor_categories.product_group_id',$request->progroup)->orwhereIN('vendor_categories.product_category_id',$request->procat)->orwhereIN('vendor_categories.sub_category_id',$request->subcat)->select('vendors.id','vendors.first_name','vendors.vendor_code')->get();
         return $vendor;
         
     }
@@ -329,27 +332,9 @@ class EnquiryController extends Controller
     }
 
     public function storerfq(Request $request){
-    //return $request;
-            $selected= $request['vendorid'];
-            $ven= implode(',',$selected);
-        //return $vendorid1='"'.implode('","',(array)$ven).'"';
-         //return $v=implode('"',$ven);
-               //$v=str_replace(',','","',$ven);
-            $vendorid = explode(',', $ven);
-            //$vendorid=[];
-            //return $vendorid=$v;
-
-
-       //return $v=implode('"',$ven);
-          // $vendorid=array($v);
-          //return preg_replace('/\\\\/', '', $v);
-        //return $vid= preg_replace(array(array(''), $vendorid);
-         /*foreach ($vendorid as $key => $val)
-            {
-                 return $venid = stripslashes($val);
-            }*/
-
-    
+        //return $request;
+        
+        
             /*$clientCode1 = "RFQ00000";
 
              //return substr($lastfetch->rfq_number, -5);
@@ -368,74 +353,36 @@ class EnquiryController extends Controller
             $clientCode2 = $code + 1;
              $clientCode = 'RFQ'.'00000'.$clientCode2;
              $request['rfq_number']=$clientCode;*/
-             //return $request['vendorid'][0];
-                //$teststring = explode(',', $request['vendorid'][2]);
-//return $teststring[0];
-            if(isset($selected)){
-            for($i = 0; $i< count($selected); $i++)
+
+            if(isset($request['vendor_id'])){
+            for($i = 0; $i< count($request['vendor_id']); $i++)
             {
-                if(count(explode(',',$request['vendorid'][$i]))>1){
-                    for($j=0;$j<count(explode(',',$request['vendorid'][$i]));$j++){
-                     $lastfetch=RfqToVendor::select('id','rfq_number')->orderBy('id','DESC')->first();
-            
-                    if(isset($lastfetch))
-                    {
-                        $request['rfq_number'] = 'RFQ'.str_pad($lastfetch->id + 1, 6, "0", STR_PAD_LEFT);
-                    }
-                    else{
-                        $request['rfq_number'] = 'RFQ'.str_pad(1, 6, "0", STR_PAD_LEFT);
-                    }
-                    $enq['enquiry_id'] = $request->enquiry_id;
-                    $enq['product_id'] =isset($request['product_id'][$i]) ? $request['product_id'][$i]:'';
-                    $enq['enquiry_item_id'] = isset($request['enquiry_item_id'][$i]) ? $request['enquiry_item_id'][$i]:'';
-                    $teststring = explode(',', $request['vendorid'][$i]);
-                    $enq['vendor_id'] = isset($teststring[$j]) ? $teststring[$j]:'';
-                    $enq['rfq_number']=$request['rfq_number'];
-                    $enq['created_by_id']=auth()->user()->id;
-                        //return $enq;
-                    $rfq=RfqToVendor::create($enq);
-                    
-                    }
+                $lastfetch=RfqToVendor::select('id','rfq_number')->orderBy('created_at','DESC')->first();
+        
+                if(isset($lastfetch))
+                {
+                    $request['rfq_number'] = 'RFQ'.str_pad($lastfetch->id + 1, 6, "0", STR_PAD_LEFT);
                 }
                 else{
-                    $lastfetch=RfqToVendor::select('id','rfq_number')->orderBy('id','DESC')->first();
-        
-                    if(isset($lastfetch))
-                    {
-                        $request['rfq_number'] = 'RFQ'.str_pad($lastfetch->id + 1, 6, "0", STR_PAD_LEFT);
-                    }
-                    else{
-                        $request['rfq_number'] = 'RFQ'.str_pad(1, 6, "0", STR_PAD_LEFT);
-                    }
-                    $enq['enquiry_id'] = $request->enquiry_id;
-                    $enq['product_id'] =isset($request['product_id'][$i]) ? $request['product_id'][$i]:'';
-                    $enq['enquiry_item_id'] = isset($request['enquiry_item_id'][$i]) ? $request['enquiry_item_id'][$i]:'';
-                     $teststring = explode(',', $request['vendorid'][$i]);
-                    //return $teststring[0];
-                    $enq['vendor_id'] = isset($teststring[0]) ? $teststring[0]:'';
-                    $enq['rfq_number']=$request['rfq_number'];
-                    $enq['created_by_id']=auth()->user()->id;
-                        //return $enq;
-                    $rfq=RfqToVendor::create($enq);
-                
+                    $request['rfq_number'] = 'RFQ'.str_pad(1, 6, "0", STR_PAD_LEFT);
                 }
-                
-            }
-            
-        }
+                $enq['enquiry_id'] = $request->enquiry_id;
+                $enq['product_id'] =isset($request['product_id'][$i]) ? $request['product_id'][$i]:'';
+                $enq['enquiry_item_id'] = isset($request['enquiry_item_id'][$i]) ? $request['enquiry_item_id'][$i]:'';
+                $enq['vendor_id'] = isset($request['vendor_id'][$i]) ? $request['vendor_id'][$i]:'';
+                $enq['rfq_number']=$request['rfq_number'];
+                $enq['created_by_id']=auth()->user()->id;
+            //return $enq;
+                $rfq=RfqToVendor::create($enq);
 
-        for($i = 0; $i< count($vendorid); $i++)
-        {
+                $rfqven=VendorRfq::whereIN('vendor_id',$request['vendor_id'])->where('enquiry_id',$request->enquiry_id)->select('id','enquiry_id','vendor_id')->get();
 
-        $rfqven=VendorRfq::where('enquiry_id',$request->enquiry_id)->where('vendor_id',$vendorid[$i])->select('id','enquiry_id','vendor_id')->first();
-        
-    
-                if($rfqven==''){
-                
+                if($rfqven=='[]'){
                     //return 'if';
-                    if(isset($vendorid)){
-                        
-                            $venrfq=VendorRfq::select('id')->orderBy('id','desc')->first();
+                   if(isset($request['vendor_id'])){
+                        for($i = 0; $i< count($request['vendor_id']); $i++)
+                        {
+                            $venrfq=VendorRfq::select('id')->orderBy('created_at','DESC')->first();
 
                             if(isset($venrfq))
                             {
@@ -448,14 +395,16 @@ class EnquiryController extends Controller
                             $erfq['enquiry_supplier_no']=$request['rfq_number'];
                             $erfq['rfq_id'] = $rfq->id;
                             $erfq['enquiry_id'] = $request->enquiry_id;
-                            $erfq['vendor_id'] =isset($vendorid[$i]) ? $vendorid[$i]:'';
+                            $erfq['vendor_id'] =isset($request['vendor_id'][$i]) ? $request['vendor_id'][$i]:'';
                             //return $erfq;
                             VendorRfq::create($erfq);
-                    }
-                } 
-        }
-            
+                        }
+                    } 
+                }
                 
+            }
+            
+        }
         //return $rfq;
         //return 
 
@@ -465,24 +414,6 @@ class EnquiryController extends Controller
        return redirect()->back();
 
     }
-
-   public function strip_slashes($str)
-    {
-        if (is_array($str))
-        {
-            foreach ($str as $key => $val)
-            {
-                $str[$key] = strip_slashes($val);
-            }
-        }
-        else
-        {
-            $str = stripslashes($str);
-        }
-
-        return $str;
-    }
-
 
     /**
      * Update the specified resource in storage.

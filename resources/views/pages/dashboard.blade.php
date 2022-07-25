@@ -172,16 +172,18 @@
                                 <thead>
                                     <tr>
                                         <th>{{ __('Name')}}</th>
+                                        <th>{{ __('Product Code')}}</th>
                                         <th>{{ __('Image')}}</th>
                                         <th>{{ __('Brand')}}</th>
                                         
-                                        <th>{{ __('Action')}}</th>
+                                      
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach($newitem as $item)
                                     <tr>
                                         <td>{{ isset($item->name) ? $item->name:''}}</td>
+                                        <td>{{ isset($item->product_code) ? $item->product_code:''}}</td>
                                         <td>
                                             @if(isset($item->image))
                                             <img src="{{ url('images/upload/item/'.$item['image'])}}" alt="" class="img-fluid img-20">
@@ -193,10 +195,7 @@
                                             {{ isset($item->brand) ? $item->brand:''}}
                                         </td>
                                         
-                                        <td>
-                                            
-                                            <a href="javascript:;" class="deletebyid" data-id="{{ isset($item->id) ? $item->id:'' }}"  data-url="{{route('itemdelete',$item['id'])}}"><i class="ik ik-trash-2 f-16 text-red"></i></a>
-                                        </td>
+                                        
                                     </tr>
                                     @endforeach
                                 </tbody>

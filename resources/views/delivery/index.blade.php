@@ -71,7 +71,7 @@
                         </div>-->
                         <div class="col col-sm-6">
                             <div class="card-search with-adv-search dropdown">
-                                <form action="{{route('measurement.index')}}" method="get">
+                                <form action="{{route('delivery.index')}}" method="get">
                                     <input type="text" class="form-control global_filter searchclass" id="search" name="search" placeholder="Search.." >
                                     <button type="submit" class="btn btn-icon"><i class="ik ik-search"></i></button>
                                     <button type="button" id="adv_wrap_toggler_1" class="adv-btn ik ik-chevron-down dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>

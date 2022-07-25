@@ -30,12 +30,12 @@ class CategoriesController extends Controller
         {
             //return $request;
             if($request->name!=''){
-                $parentcategory = $this->category->where('name','like', '%'.$request->name.'%')->with('children')->select('id','name','slug','image')->orderBy('created_at','DESC')->paginate(10);
+                $parentcategory = $this->category->where('name','like', '%'.$request->name.'%')->with('children')->select('id','name')->orderBy('created_at','DESC')->paginate(10);
             }
             else{
-                 $parentcategory = $this->category->whereNull('parent_id')->orwhere('parent_id',0)->with('children')->select('id','name','slug','parent_id','image')->orderBy('created_at','DESC')->paginate(10);
+                 $parentcategory = $this->category->whereNull('parent_id')->orwhere('parent_id',0)->with('children')->select('id','name','parent_id')->orderBy('created_at','DESC')->paginate(10);
             }
-             $allcategory = $this->category->whereNull('parent_id')->orwhere('parent_id',0)->with('children')->select('id','name','slug','parent_id','image')->get();
+             $allcategory = $this->category->whereNull('parent_id')->orwhere('parent_id',0)->with('children')->select('id','name','parent_id')->get();
                 
                 return view('inventory.category.index',compact('parentcategory','allcategory'))->with('category',$this->category);
         }
@@ -49,7 +49,7 @@ class CategoriesController extends Controller
        
         if($request->get('query')!=''){
              $query = $request->get('query');
-                $searchcategory = $this->category->where('name','like', '%'.$query.'%')->select('id','name','slug')->get();
+                $searchcategory = $this->category->where('name','like', '%'.$query.'%')->select('id','name')->get();
         }
         return response()->json($searchcategory);
        
@@ -80,7 +80,7 @@ class CategoriesController extends Controller
             
                     $cate_data['parent_id'] = null;
                 
-                    $cate_data['name'] = ucfirst(strtolower(trans($request['name'])));
+                    $cate_data['name'] = ucwords($request['name']);
                     //$cate_data['slug'] = $request['slug'];
                     
                     //return $cate_data;
@@ -121,7 +121,7 @@ class CategoriesController extends Controller
             
                     $cate_data['parent_id'] = $request['parent_id'];
                 
-                    $cate_data['name'] = ucfirst(strtolower(trans($request['name'])));
+                    $cate_data['name'] = ucwords($request['name']);
                     //$cate_data['slug'] = $request['slug'];
                     
                     //return $cate_data;
@@ -280,7 +280,7 @@ class CategoriesController extends Controller
 
                 $cate_data['parent_id'] = null;
 
-                $cate_data['name'] = $request['name'];
+                $cate_data['name'] = ucwords($request['name']);
                   //return $cate_data;  
                 $category = $this->category->where('id',$request->id)->update($cate_data);
                     
@@ -301,7 +301,7 @@ class CategoriesController extends Controller
 
                 $cate_data['parent_id'] = $request['parent_id'];
 
-                $cate_data['name'] = $request['name'];
+                $cate_data['name'] = ucwords($request['name']);
                   //return $cate_data;  
                  $category = $this->category->where('id',$request->id)->update($cate_data);
                     
@@ -337,7 +337,7 @@ class CategoriesController extends Controller
                 foreach($singlename as $k => $categoryname)
                 {
                     $cate_data['name'] = $request['name'];
-                    $cate_data['slug'] = $categoryname;
+                    //$cate_data['slug'] = $categoryname;
                     $cate_data['type']=ucfirst($request['type']);
                     //$cate_data['user_id'] = auth()->user()->id;
                     //return $cate_data;

@@ -47,6 +47,15 @@ class CityController extends Controller
         return redirect()->back();
     }
 
+    public function citysearch(Request $request){
+        //return $request;
+        if($request->get('query')!=''){
+              $query = $request->get('query');
+                $search= City::where('name','like', '%'.$query.'%')->select('id','name')->get();
+        }
+        return response()->json($search);
+    }
+
     /**
      * Display the specified resource.
      *

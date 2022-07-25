@@ -24,6 +24,17 @@ class StateController extends Controller
         return view('state.index',compact('states'));
     }
 
+    public function statesearch(Request $request){
+
+       //return $request;
+        if($request->get('query')!=''){
+             $query = $request->get('query');
+                $searchcategory = State::where('name','like', '%'.$query.'%')->select('id','name')->get();
+        }
+        return response()->json($searchcategory);
+    
+    }
+
     /**
      * Show the form for creating a new resource.
      *

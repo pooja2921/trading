@@ -103,11 +103,11 @@
                                         </div>
                                     </div>
                                     <div class="col-sm-6 procategory" style="display: none;" >
-                                    <div class="form-group">
-                                            
-                                                <label class="d-block">Product Category<span class="text-red">*</span></label>
-                                                <select class="form-control select2 subcat" id="procat" name="product_category_id[]" multiple="multiple" data-url="{{url('/')}}" required="">
-                                                </select>
+                                        <div class="form-group">
+                                                
+                                                    <label class="d-block">Product Category<span class="text-red">*</span></label>
+                                                    <select class="form-control select2 subcat" id="procat" name="product_category_id[]" multiple="multiple" data-url="{{url('/')}}" required="">
+                                                    </select>
                                         </div>
                                     </div>
                                     
@@ -188,7 +188,7 @@
         
                                     <div class="form-group">
                                         <label for="last_name">Last Name<span class="text-red">*</span></label>
-                                        <input id="last_name" type="text" class="form-control" name="last_name" value="{{old('last_name')}}" placeholder="Enter Last Name">
+                                        <input id="last_name" type="text" class="form-control" name="last_name" value="{{old('last_name')}}" placeholder="Enter Last Name" required="">
                                         <div class="lasterror" style="display:none;">If last name is not available please insert NA</div>
 
 
@@ -211,9 +211,21 @@
                             
                                 <div class="form-group">
                                     <label for="email">Email<span class="text-red">*</span></label>
-                                    <input id="email" type="text" class="form-control email" name="email"  id="emailval" value="" placeholder="Enter Email" required="">
+                                    <input id="email" type="text" class="form-control email" name="email"  id="emailval" value="{{old('email')}}" placeholder="Enter Email" required="">
                                     <span class="emailerror"></span>
                                     
+                                </div>
+
+                                <div class="form-group">
+                                        <label for="password">{{ __('Password')}}<span class="text-red">*</span></label>
+                                        <input id="password" type="password" class="form-control @error('password') is-invalid @enderror" name="password" placeholder="Enter password" required>
+                                        
+
+                                        @error('password')
+                                            <span class="invalid-feedback" role="alert">
+                                                <strong>{{ $message }}</strong>
+                                            </span>
+                                        @enderror
                                 </div>
 
                 
@@ -226,23 +238,33 @@
                     
                            
                                 <div class="form-group">
-                                    <label for="mobile">Mobile No.<span class="text-red">*</span></label><br>
-                                    <input type="hidden" name="coun_code" id="count_code">
-                                     <input type="tel" id="number" class="form-control" name="mobile" required> 
-                                    
-                                    <span id="lblError" style="color: red"></span>
-                                    
+                                    <div class="row">
+                                        <div class="col-sm-6">
+                                        <label for="mobile">Mobile No.<span class="text-red">*</span></label><br>
+                                        <input type="hidden" name="coun_code" id="count_code">
+                                         <input type="tel" id="number" class="form-control" name="mobile" required> 
+                                        
+                                        <span id="lblError" style="color: red"></span>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="altmobile">Alternate Mobile No.</label><br>
+                                                <input type="hidden" name="altcount_code" id="altcount_code" value="91">
+                                                 <input type="tel" id="altmobile" class="form-control" name="mobilealt" value="{{old('mobilealt')}}"> 
+                                               
+                                                <span id="altmblError" style="color: red"></span>
+                                        </div>
+                                    </div>
                                 </div>
 
                             
-                                    <div class="form-group">
+                                    <!-- <div class="form-group">
                                             <label for="altmobile">Alternate Mobile No.</label><br>
                                             <input type="hidden" name="altcount_code" id="altcount_code" value="91">
                                              <input type="tel" id="altmobile" class="form-control" name="mobilealt" value="{{old('mobilealt')}}"> 
                                            
                                             <span id="altmblError" style="color: red"></span>
                                             
-                                    </div>
+                                    </div> -->
                     
 
                                 
@@ -783,12 +805,10 @@ $('#second_city_code').intlTelInput({
 //$("#mobile").intlTelInput(); 
 
 
-
-$('#vendorform').submit(function (e) {         
-  // alert('ghnghjgfjf');
- 
-
-
+//$(document).on('click', '#submit', function(e) {
+$('#submit').click(function() {
+ //e.preventDefault(); //prevent the default action        
+   //alert('ghnghjgfjf');
 
  var lastname=$("#last_name").val();
  //console.log(lastname);
@@ -797,18 +817,16 @@ $('#vendorform').submit(function (e) {
     $(".lasterror").show();   
     return false; 
  }
- else if(lastname=='NA'){
+ /*else if(lastname=='NA'){
+    $(".lasterror").hide(); 
     return true;
- }
+ }*/
  /*else{
     return true;
  }*/
 
- 
-
-
 var email = $("#email").val();    
-//alert(email);
+console.log(email);
 var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;    
 if(!regex.test(email)){    
 $(".emailerror").html("invalid email id");    

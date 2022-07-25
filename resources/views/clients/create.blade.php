@@ -515,7 +515,7 @@
                         <div class="card-body">
                             <div class="col-md-12" style="text-align: center;">
                                 <div class="form-group">
-                                    <button type="submit" class="btn btn-primary">{{ __('Submit')}}</button>
+                                    <button type="submit" id="submit" class="btn btn-primary">{{ __('Submit')}}</button>
                                 </div>
                             </div>
                         </div>
@@ -693,7 +693,7 @@ var lastname=$(this).val();
 
 
 
-$('#clientform').submit(function () {        
+$('#submit').click(function () {        
   //alert('fbcbcvbc');
   var clienttype =   $('#clientType').val();
             console.log(clienttype); 
@@ -731,9 +731,9 @@ $('#clientform').submit(function () {
     $(".lasterror").show();   
     return false; 
  }
- else if(lastname=='NA'){
+ /*else if(lastname=='NA'){
     return true;
- }
+ }*/
 
 var inputvalues = $(".email").val();    
 var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;    

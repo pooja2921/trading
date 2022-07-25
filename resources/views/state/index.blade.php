@@ -239,7 +239,7 @@
 
 <script type="text/javascript">
 
-    var route = "{{ url('itemsearch') }}";
+    var route = "{{ url('statesearch') }}";
  $('#search').typeahead({
             source: function (query, process) {
                 return $.get(route, {

@@ -18,7 +18,7 @@ class CorporateController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $corporates=Corporate::where('id', '!=', 0)->orderBy('created_at','DESC')->paginate(10);
          return view('corporate.index',compact('corporates'));
@@ -116,8 +116,16 @@ class CorporateController extends Controller
             $request['user_id']=auth()->user()->id;
             
             $lastfetch=Corporate::select('id')->orderBy('created_at','DESC')->first();
+
+            if(isset($lastfetch))
+            {
+                $request['corporate_code'] = 'CO'.str_pad($lastfetch->id + 1, 6, "0", STR_PAD_LEFT);
+            }
+            else{
+                $request['corporate_code'] = 'CO'.str_pad(1, 6, "0", STR_PAD_LEFT);
+            }
             
-            $clientCode1 = "CO00000";
+            /*$clientCode1 = "CO00000";
             if($lastfetch->id==NULL)
             {
                  $clientCode2 = 1;
@@ -129,7 +137,7 @@ class CorporateController extends Controller
             }
             $clientCode2 = $lastfetch->id + 1;
             $clientCode = $clientCode1.$clientCode2;
-            $request['corporate_code']=$clientCode;
+            $request['corporate_code']=$clientCode;*/
             
             $request['status']=1;
 
@@ -167,6 +175,18 @@ class CorporateController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
+
+    public function corpsearch(Request $request){
+       //return $request;
+        if($request->get('query')!=''){
+             $query = $request->get('query');
+                $corp=Corporate::where('first_name','like', '%'.$query.'%')->select('id','first_name as name')->get();
+        }
+        return response()->json($corp);
+
+
+    } 
+
     public function show($id)
     {
         //
@@ -186,6 +206,8 @@ class CorporateController extends Controller
         $countries=Country::get();
         return view('corporate.edit',compact('states','cities','corporate','countries'));
     }
+
+
 
     /**
      * Update the specified resource in storage.

@@ -180,7 +180,7 @@
 
 <script type="text/javascript">
 
-    var route = "{{ url('itemsearch') }}";
+    var route = "{{ url('citysearch') }}";
  $('#search').typeahead({
             source: function (query, process) {
                 return $.get(route, {

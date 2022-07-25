@@ -85,6 +85,7 @@
                                     <thead>
                                         <tr>
                                             <th>{{ __('Name')}}</th>
+                                            <th>{{ __('User Code')}}</th>
                                             <th>{{ __('Email')}}</th>
                                             <th>{{ __('Role')}}</th>
                                             
@@ -95,6 +96,7 @@
                                         @foreach($users as $user)
                                           <tr>
                                             <td>{{ isset($user->name) ? $user->name :'' }}</td>
+                                            <td>{{ isset($user->user_code) ? $user->user_code :'' }}</td>
                                             <td>{{ isset($user->email) ? $user->email :'' }}</td>
                                             <td>
                                             @foreach($user->roles as $role)

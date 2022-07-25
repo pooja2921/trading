@@ -91,9 +91,17 @@ class ClientController extends Controller
         if($request->get('query')!=''){
             $query = $request->get('query');
             //$query=ucfirst($request->query);
-        $client=Client::where('first_name','like', '%'.$query.'%')->select('first_name','id')->get(); 
+        $client=Client::where('first_name','like', '%'.$query.'%')->select('first_name as name','id')->get(); 
         }
        return response()->json($client);
+    }
+
+    public function companysearch(Request $request){
+        if($request->get('query')!=''){
+             $query = $request->get('query');
+                $searchcategory = Client::where('company_name','like', '%'.$query.'%')->select('id','company_name as name')->get();
+        }
+        return response()->json($searchcategory);
     }
     /**
      * Display the specified resource.

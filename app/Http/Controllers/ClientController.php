@@ -112,23 +112,31 @@ class ClientController extends Controller
             $tanents=Tanent::where('id','1')->select('id')->first();
             $request['company_id']=$tanents->id;
 
-            $request['address']=ucwords(strtolower($request->address));
+            $request['address']=ucwords($request->address);
 
             if($request->address_1!=''){
-                $request['address_1']=ucwords(strtolower($request->address_1));
+                $request['address_1']=ucwords($request->address_1);
             }
             if($request->address_2!=''){
-                $request['address_2']=ucwords(strtolower($request->address_2));
+                $request['address_2']=ucwords($request->address_2);
             }
             if($request->altaddress!=''){
-                $request['altaddress']=ucwords(strtolower($request->altaddress));
+                $request['altaddress']=ucwords($request->altaddress);
             }
 
             $request['user_id']=auth()->user()->id;
             
             $lastfetch=Client::select('id')->orderBy('created_at','DESC')->first();
+
+            if(isset($lastfetch))
+            {
+                $request['client_code'] = 'CL'.str_pad($lastfetch->id + 1, 6, "0", STR_PAD_LEFT);
+            }
+            else{
+                $request['client_code'] = 'CL'.str_pad(1, 6, "0", STR_PAD_LEFT);
+            }
             
-            $clientCode1 = "CL00000";
+            /*$clientCode1 = "CL00000";
             if($lastfetch->id==NULL)
             {
                  $clientCode2 = 1;
@@ -140,7 +148,7 @@ class ClientController extends Controller
             }
             $clientCode2 = $lastfetch->id + 1;
             $clientCode = $clientCode1.$clientCode2;
-            $request['client_code']=$clientCode;
+            $request['client_code']=$clientCode;*/
             
             $request['status']=1;
 
@@ -249,7 +257,7 @@ class ClientController extends Controller
         if($request->get('query')!=''){
             $query = $request->get('query');
             //$query=ucfirst($request->query);
-        $client=Client::where('first_name','like', '%'.$query.'%')->select('first_name','id')->get(); 
+        $client=Client::where('first_name','like', '%'.$query.'%')->select('first_name as name','id')->get(); 
         }
        return response()->json($client);
     }
@@ -257,7 +265,7 @@ class ClientController extends Controller
     public function companysearch(Request $request){
         if($request->get('query')!=''){
              $query = $request->get('query');
-                $searchcategory = Client::where('company_name','like', '%'.$query.'%')->select('id','company_name')->get();
+                $searchcategory = Client::where('company_name','like', '%'.$query.'%')->select('id','company_name as name')->get();
         }
         return response()->json($searchcategory);
     }

@@ -73,7 +73,7 @@
                                                     @endforeach
                                                     
                                                 </select>
-                                            <!-- <input id="search" type="text" class="form-control parentcat" name="category_id" value="" placeholder="Enter Category" required="" data-url="{{url('getchildcat')}}" data-public="{{url('/')}}"> -->
+                                            
                                         </div>
                                         <div class="form-group subcategory" style="display: none;">
                                             
@@ -101,7 +101,7 @@
                                             
                                             <div class="form-group">
                                                 <label for="title">Brand<span class="text-red">*</span></label>
-                                                <input id="Brand" type="text" class="form-control" name="brand" value="" placeholder="Enter Brand" required="">
+                                                <input id="brand" type="text" class="form-control" name="brand" value="" placeholder="Enter Brand" required="">
                                                 <div class="help-block with-errors"></div>
                                             </div>
 
@@ -406,8 +406,8 @@
 
     <script type="text/javascript">
 
-    var route = "{{ url('catsearch') }}";
- $('#search').typeahead({
+   var route = "{{ url('brandsearch') }}";
+ $('#brand').typeahead({
             source: function (query, process) {
                 return $.get(route, {
                     query: query
