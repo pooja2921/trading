@@ -29,8 +29,8 @@ class CategoriesController extends Controller
         try
         {
             //return $request;
-            if($request->name!=''){
-                $parentcategory = $this->category->where('name','like', '%'.$request->name.'%')->with('children')->select('id','name')->orderBy('created_at','DESC')->paginate(10);
+            if($request->search!=''){
+                $parentcategory = $this->category->where('name','like', '%'.$request->search.'%')->select('id','name')->orderBy('created_at','DESC')->paginate(10);
             }
             else{
                  $parentcategory = $this->category->whereNull('parent_id')->orwhere('parent_id',0)->with('children')->select('id','name','parent_id')->orderBy('created_at','DESC')->paginate(10);
@@ -84,8 +84,8 @@ class CategoriesController extends Controller
                     //$cate_data['slug'] = $request['slug'];
                     
                     //return $cate_data;
-                    $cat=$this->category->where('name',$request->name)->first();
-                    if($cat==''){
+                    /*$cat=$this->category->where('name',$request->name)->first();
+                    if($cat==''){*/
 
                             $category = $this->category->create($cate_data);
                              
@@ -96,10 +96,10 @@ class CategoriesController extends Controller
                                  $category->makeChildOf($request->parent_id);
                             }
                             \Session::flash('success', ' Sucessfully inserted your data');
-                        }
+                        /*}
                     else{
                         \Session::flash('success', 'Already inserted category');  
-                    }
+                    }*/
                 
 
             
@@ -125,8 +125,8 @@ class CategoriesController extends Controller
                     //$cate_data['slug'] = $request['slug'];
                     
                     //return $cate_data;
-                    $cat=$this->category->where('name',$request->name)->first();
-                    if($cat==''){
+                    /*$cat=$this->category->where('name',$request->name)->first();
+                    if($cat==''){*/
 
                             $category = $this->category->create($cate_data);
                              
@@ -137,10 +137,10 @@ class CategoriesController extends Controller
                                  $category->makeChildOf($request->parent_id);
                             }
                             \Session::flash('success', ' Sucessfully inserted your data');
-                        }
-                    else{
+                        /*}*/
+                    /*else{
                         \Session::flash('success', 'Already inserted category');  
-                    }
+                    }*/
                 
 
             

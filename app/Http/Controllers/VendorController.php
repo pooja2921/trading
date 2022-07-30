@@ -55,6 +55,13 @@ class VendorController extends Controller
     public function store(Request $request)
     {
     //return $request;
+
+         // return $request['product_category_id'];
+     //return json_decode($request['prduct_group_data']);
+        //$collection = collect(json_decode($request['prduct_group_data']));
+      // $finaldata = $collection->whereIn('id', $request['product_category_id']);
+      //return json_encode($finaldata);
+        //return $this->getgroup($request['prduct_group_data'],$request['product_category_id']);
         try{
             if($request->clientType=='Registered' || $request->clientType=='Registered-Composite'){
                 $validator = Validator::make($request->all(), [
@@ -142,12 +149,12 @@ class VendorController extends Controller
         $lastfetch=Vendor::select('id')->orderBy('created_at','DESC')->first();
 
         if(isset($lastfetch))
-            {
-                $request['vendor_code'] = 'SP'.str_pad($lastfetch->id + 1, 6, "0", STR_PAD_LEFT);
-            }
-            else{
-                $request['vendor_code'] = 'SP'.str_pad(1, 6, "0", STR_PAD_LEFT);
-            }
+        {
+            $request['vendor_code'] = 'SP'.str_pad($lastfetch->id + 1, 6, "0", STR_PAD_LEFT);
+        }
+        else{
+            $request['vendor_code'] = 'SP'.str_pad(1, 6, "0", STR_PAD_LEFT);
+        }
             
             /*$vendorCode1 = "SP00000";
             if($lastfetch->id==NULL)
@@ -170,19 +177,19 @@ class VendorController extends Controller
             $request['company_id']=$tanents->id;
 
             $vendor=Vendor::create($request->except('_token','category_id','second_altcount_code','second_count_code'));
-
-            if(isset($request['product_group_id'])){
-                for($i = 0; $i< count($request['product_group_id']); $i++)
+            //return count($request['product_group_id']);
+            if(isset($request['product_category_id'])){
+                for($i = 0; $i< count($request['product_category_id']); $i++)
                 {
+                    
                     $category['vendor_id'] = $vendor->id;
-                    $category['product_group_id'] = $request['product_group_id'][$i];
+                    $category['product_group_id'] =$this->getgroup($request['prduct_group_data'],$request['product_category_id'][$i]);
                     $category['product_category_id'] = $request['product_category_id'][$i];
-                    $category['sub_category_id'] = $request['sub_category_id'][$i];
-                    //return $category;
+                    
                     VendorCategory::create($category);
                 }
-            
             }
+            //}
 
             return redirect()->route('vendor.index');
         }
@@ -190,6 +197,19 @@ class VendorController extends Controller
         {
             return \Response::json(["status"=>"error", "message"=> $e->getMessage()]);
         }
+    }
+
+    public function getgroup($productgroupdata, $categoryid){
+        //return json_decode($productgroupdata)[0]->id;
+        //return $productcategoryid[0];
+        //return $productgroupdata.length();
+        //for($i=0;$i<count($productcategoryid);$i++){
+          for($j=0;$j<count(json_decode($productgroupdata));$j++){
+            if($categoryid==json_decode($productgroupdata)[$j]->id){
+                return json_decode($productgroupdata)[$j]->parent_id;
+            }
+          }  
+        //}
     }
 
     public function vendorsearch(Request $request){
@@ -215,7 +235,7 @@ class VendorController extends Controller
     public function childcat(Request $request){
         //return $request;
          //$cat =Category::where('name',$request->name)->select('id','name')->first();
-        $category =Category::whereIN('parent_id',$request->id)->select('id','name')->get();
+        $category =Category::whereIN('parent_id',$request->id)->select('id','name','parent_id')->get();
         return $category;
         // return \Response::json(['status'=>'success', 'message'=>'category selected successfully.', 'data'=> $category]);
     }

@@ -106,7 +106,9 @@
                                     </th>-->
                                     <th>{{ __('Image')}}</th>
                                     <th>{{ __('Product Name')}}</th>
+                                    <th>{{ __('Product Group')}}</th>
                                     <th>{{ __('Product Code')}}</th>
+
                                     <th>{{ __('Brand')}}</th>
                                     <th style="width: 90px;!important">{{ __('Action')}}</th>
                                 </tr>
@@ -128,6 +130,16 @@
                                                 @endif
                                             </td>
                                             <td>{{ isset($item->name) ? $item->name :'' }}</td>
+                                            
+                                            <td>
+                                                @foreach($item->productcategory as $cat)
+                                                @if($cat->parentgroup->id==$cat->product_group_id)
+
+                                                {{ isset($cat->parentgroup->name) ? $cat->parentgroup->name :'' }}
+                                                @endif
+                                                @endforeach
+                                            </td>
+
                                             <td>{{ isset($item->product_code) ? $item->product_code :'' }}</td>
                                             <td>{{ isset($item->brand) ? $item->brand :'' }}</td>
                                             

@@ -41,10 +41,10 @@ class ItemController extends Controller
         //return  $request;
         //$this->items->get();
         if($request->name!=''){
-             $items= $this->products->where('name','like', '%'.$request->name.'%')->select('id','name','image','brand','product_code')->orderBy('created_at','DESC')->paginate(10); 
+             $items= $this->products->where('name','like', '%'.$request->name.'%')->with('category','productcategory')->select('id','name','image','brand','product_code')->orderBy('created_at','DESC')->paginate(10); 
         }
         else{
-             $items= $this->products->select('id','name','image','brand','product_code')->where('id', '!=', 0)->orderBy('created_at','DESC')->paginate(10);
+            $items= $this->products->select('id','name','image','brand','product_code')->with('category','productcategory')->where('id', '!=', 0)->orderBy('created_at','DESC')->paginate(10);
         }
         return view('items.items',compact('items'));
     }
@@ -163,9 +163,17 @@ class ItemController extends Controller
                 $request['brand']=ucfirst(strtolower(trans($request->brand)));
             }
 
-            $lastfetch=Product::select('id')->orderBy('created_at','DESC')->first();
+            $lastfetch=Product::select('id')->orderBy('id','DESC')->first();
+
+            if(isset($lastfetch))
+                    {
+                        $request['product_code'] = 'PR'.str_pad($lastfetch->id + 1, 6, "0", STR_PAD_LEFT);
+                    }
+                    else{
+                        $request['product_code'] = 'PR'.str_pad(1, 6, "0", STR_PAD_LEFT);
+                    }
             
-            $productCode1 = "PR00000";
+            /*$productCode1 = "PR00000";
             if($lastfetch->id==NULL)
             {
                  $productCode2 = 1;
@@ -177,7 +185,7 @@ class ItemController extends Controller
             }
             $productCode2 = $lastfetch->id + 1;
             $productCode = $productCode1.$productCode2;
-            $request['product_code']=$productCode;
+            $request['product_code']=$productCode;*/
 
 
              $item=$this->products->create($request->except(['_token','file','itemimages','attribute','quantity','price','sku','filepath','sale_price','variant','available','productcategory_id','product_group_id','product_category_id','sub_category_id']));

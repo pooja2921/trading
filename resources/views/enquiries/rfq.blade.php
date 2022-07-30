@@ -206,19 +206,19 @@
                             </td>
 
                             <td>
-                               <input type="number" name="quantity[]" class="form-control" placeholder="Quantity" aria-describedby="basic-addon1" value="{{isset($detail['quantity']) ? $detail['quantity']:''}}" readonly=""> 
+                               <input type="number" name="quantity[]" class="form-control" placeholder="Quantity" aria-describedby="basic-addon1" value="{{isset($detail['quantity']) ? $detail['quantity']:''}}" readonly="" style="width: 100px;"> 
                             </td>
                             
                             <td>
                                 <input type="hidden" id="product_id" name="product_id[]"  value="{{isset($detail['product_id']) ? $detail['product_id']:''}}" class="form-control product_id" placeholder="Product Id">
 
-                                <input id="title" type="text" class="form-control proname" name="product_name[]" value="{{isset($detail['product_name']) ? $detail['product_name']:''}}" placeholder="Enter Product Name" readonly="">
+                                <input id="title" type="text" class="form-control proname" name="product_name[]" value="{{isset($detail['product_name']) ? $detail['product_name']:''}}" placeholder="Enter Product Name" readonly="" style="width: 100px;">
                                 
                             </td>
 
                             <td>
 
-                                <input id="title" type="text" class="form-control procode" name="product_code[]" value="{{isset($detail['product_code']) ? $detail['product_code']:''}}" placeholder="Enter Product Code" readonly="">
+                                <input id="title" type="text" class="form-control procode" name="product_code[]" value="{{isset($detail['product_code']) ? $detail['product_code']:''}}" placeholder="Enter Product Code" readonly="" style="width: 100px;">
 
                                
                             </td>
@@ -269,13 +269,15 @@
                                 </select>--}}
 
                                 <textarea class="form-control tradesubcat" id="search_selected" name="product_category_name[]" rows="2" data-url="{{url('/')}}" style="width: 100px;height: 82px;">
+                                    
                                     @foreach($detail->products as $product)
                                         @foreach($product->productcategory as $Key=>$post_tag)
                                             @if($key==0)
                                             {{$post_tag->parentcategory->name}}
                                             @else
                                             {{','.$post_tag->parentcategory->name}}
-                                            @endif
+                                            @endif 
+                                            
                                         @endforeach
                                     @endforeach
                                 </textarea>
@@ -305,10 +307,16 @@
                                 <textarea class="form-control prosubcat" id="search_selected" name="product_subcategory_name[]"  id="prosubcat" rows="2" data-url="{{url('/')}}" style="width: 100px;height: 82px;">
                                     @foreach($detail->products as $product)
                                         @foreach($product->productcategory as $Key=>$post_tag)
+
                                             @if($key==0)
-                                            {{$post_tag->subcategory->name}}
+                                                {{$post_tag->subcategory->name}}
                                             @else
-                                            {{','.$post_tag->subcategory->name}}
+                                            @if($loop->first !='')
+                                                {{','.$post_tag->subcategory->name}}
+                                            @else
+                                                {{$post_tag->subcategory->name}}
+                                            @endif
+                                            
                                             @endif
                                         @endforeach
                                     @endforeach
@@ -317,7 +325,11 @@
                                             @if($key==0)
                                             {{$child->name}}
                                             @else
+                                            @if($child[0]->name !='')
                                             {{','.$child->name}}
+                                            @else
+                                                {{$child->name}}
+                                            @endif
                                             @endif
                                         @endif
                                     @endforeach--}}
@@ -327,7 +339,7 @@
                             
                             
                             <td>
-                                <textarea class="form-control spec" name="product_specification[]" rows="2" id="spec">{{isset($detail['product_specification']) ? $detail['product_specification']:''}}</textarea>
+                                <textarea class="form-control spec" name="product_specification[]" rows="2" id="spec" style="width: 100px;height: 82px;">{{isset($detail['product_specification']) ? $detail['product_specification']:''}}</textarea>
                             </td>
                             
                             <td>
@@ -743,6 +755,7 @@
                                     //pcat+='<option value='+vendor.id+'  selected="true">'+vendor.vendor_code+'</option>';
                                     //console.log(('.vendorcode_'+counti).val());
                                     //$('.vendorid_'+counti).append(','+vendor.id);
+
                                     $('.vendorcode_'+counti).append(','+vendor.vendor_code);
                                     $('.vendorid_'+counti).append(','+vendor.id);
                                     //console.log(('.vendorcode_'+counti).text());

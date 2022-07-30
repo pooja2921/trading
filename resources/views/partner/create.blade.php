@@ -117,11 +117,13 @@
                                         <div class="form-group">
                                         <label class="d-block">Sub Category<span class="text-red">*</span></label>
                                           
-                                        <select  class="form-control select2" id="subcat" name="sub_category_id[]"  multiple="multiple" required="">
+                                        <select  class="form-control select2" id="subcat" name="sub_category_id[]"  multiple="multiple">
                                         </select>
                                         </div>
                                         
                                     </div>
+
+                                    <textarea class="prduct_group_data" name="prduct_group_data" style="display:none;" ></textarea>
                                               
                                             <div class="col-sm-6">    
                                             <div class="form-group">
@@ -643,7 +645,9 @@
                     data:{'id':product},
                     success:function(data){
                         console.log(data);
+                        $('.prduct_group_data').val('');
                         var row='';
+                                $('.prduct_group_data').val(JSON.stringify(data));
                                 row+='<option value=>Select Product Category</option>';
                                 jQuery.each(data, function(i, cat){
                                 row+='<option value='+cat['id']+'>'+cat['name']+'</option>';

@@ -161,6 +161,7 @@
 
                                     <div class="form-group">
                                         <label for="client_code">Client Code</label>
+                                        <input type="hidden" class="clientid" name="client_id" value="">
                                         <input id="client_code" type="text" class="form-control client_code" name="client_code" value="{{isset($enquiry->client_code) ? $enquiry->client_code:''}}" placeholder="Enter Client Code" readonly>
                                         
                                     </div>       
@@ -168,7 +169,7 @@
                                 
                                     <div class="form-group">
                                         <label class="d-block">Contact Person (Client)</label>
-                                        <input id="contact_person" type="text" class="form-control contact_person" name="contact_person" value="{{isset($enquiry->contact_person) ? $enquiry->contact_person:''}}" placeholder="Enter Contact Person" readonly>
+                                        <input id="contact_person" type="text" class="form-control contact_person client" name="contact_person" value="{{isset($enquiry->contact_person) ? $enquiry->contact_person:''}}" placeholder="Enter Contact Person" readonly>
                                     </div>
 
                                     <div class="form-group">
@@ -281,13 +282,14 @@
                     
                             <div class="form-group">
                                 <label for="corporate_id">Corporate Code</label>
+                                <input type="hidden" name="corporate_id" class="corpid" value="">
                                  <input id="corporate_id" type="text" class="form-control corpcode" name="corporate_code" value="{{isset($enquiry->corporate_code) ? $enquiry->corporate_code:''}}" placeholder="Enter Corporate Code" readonly>
                                 
                             </div>
 
                             <div class="form-group">
                                 <label class="d-block">Contact Person (Corporate)</label>
-                                <input id="corp_contact_person" type="text" class="form-control" name="corp_contact_person" value="{{isset($enquiry->corp_contact_person) ? $enquiry->corp_contact_person:''}}" placeholder="Enter Corporate Contact Person" readonly>
+                                <input id="corp_contact_person" type="text" class="form-control corpname" name="corp_contact_person" value="{{isset($enquiry->corp_contact_person) ? $enquiry->corp_contact_person:''}}" placeholder="Enter Corporate Contact Person" readonly>
                             </div>
 
                             <div class="form-group">
@@ -470,48 +472,94 @@
                             <input type="hidden" id="progroup" name="product_group_id[]"  class="form-control parentcat" placeholder="Product Group"  autocomplete="off" value="{{isset($detail['product_group_id']) ? $detail['product_group_id']:''}}">
 
                             {{-- <input type="text" id="groupname" name="product_group"  class="form-control parentname" placeholder="Product Group" value="{{$progroup[0]['name']}}" autocomplete="off"> --}}
-                            <textarea class="form-control parentname" id="groupname" name="product_group[]" rows="2" data-url="{{url('/')}}" style="width: 100px;height: 82px;"></textarea>
+                            <textarea class="form-control parentname" id="groupname" name="product_group[]" rows="2" data-url="{{url('/')}}" style="width: 100px;height: 82px;">
+                                @foreach($progroup as $key=>$value)
+                                    @if($detail['product_group_id']==$value->id)
+                                        {{$value->name}}
+                                    @endif
+                                @endforeach
+                            </textarea>
                         </td>
                         <td>
                             
-                            <select class="form-control select2 subcat" id="procat" name="product_category_id[]" multiple="multiple" data-url="{{url('/')}}" style="display:none;">
+                            <textarea class="form-control scat" id="scat" name="product_category_id[]" rows="2" style="display:none;">
 
-                                @foreach($parentcategory as $value)
-                                           
-                                <option value="{{$value->id}}" selected='true'>{{$value->name}}</option>
-                                
+                                @foreach($detail->products as $product)
+                                    @foreach($product->productcategory as $key=>$post_tag)
+                                        @if($key==0)
+                                            {{$post_tag->parentcategory->id}}
+                                        @else
+                                            {{(','.$post_tag->parentcategory->id)}}
+                                        @endif
+                                    @endforeach
                                 @endforeach
-                            </select>
-
+                            
+                            </textarea>
                             <textarea class="form-control subcat" id="search_selected" name="product_category_name[]" rows="2" data-url="{{url('/')}}" style="width: 125px;height: 82px;">
-                                @foreach($parentcategory as $key=>$value)
+                                @foreach($detail->products as $product)
+                                    @foreach($product->productcategory as $key=>$post_tag)
+                                        @if($key==0)
+                                            {{$post_tag->parentcategory->name}}
+                                        @else
+                                            {{(','.$post_tag->parentcategory->name)}}
+                                        @endif
+                                    @endforeach
+                                @endforeach
+                                {{--@foreach($parentcategory as $key=>$value)
                                 @if($key==0)
                                     {{$value->name}}
                                 @else
                                     {{','.$value->name}}
                                 @endif
-                                @endforeach
+                                @endforeach--}}
                             </textarea>
                                        
                         </td>
                         <td>
-                           
-                                <select class="form-control select2 prosubcat" id="prosubcat" name="product_subcategory_id[]" multiple="multiple" style="display:none;">
+                            <textarea class="form-control proscat" name="product_subcategory_id[]"  id="proscat" rows="2" style="display:none;">
+                                @foreach($detail->products as $product)
+                                    @foreach($product->productcategory as $Key=>$post_tag)
+
+                                        @if($key==0)
+                                            {{$post_tag->subcategory->id}}
+                                        @else
+                                            {{','.$post_tag->subcategory->id}}
+                                        @endif
+                                    @endforeach
+                                @endforeach
+                            </textarea>
+
+                                {{--<select class="form-control select2 prosubcat" id="prosubcat" name="product_subcategory_id[]" multiple="multiple" style="display:none;">
 
                                     @foreach($childcategory as $child){
                             
                                     <option value="{{$child->id}}" selected='true'>{{$child->name}}</option>
                                     @endforeach
-                                </select>
+                                </select>--}}
 
                                 <textarea class="form-control prosubcat" id="search_selected" name="product_subcategory_name[]"  id="prosubcat" rows="2" data-url="{{url('/')}}" style="width: 125px;height: 82px;">
-                                    @foreach($childcategory as $Key=>$child)
+                                    @foreach($detail->products as $product)
+                                        @foreach($product->productcategory as $Key=>$post_tag)
+
+                                            @if($key==0)
+                                                {{$post_tag->subcategory->name}}
+                                            @else
+                                            @if($loop->first !='')
+                                                {{','.$post_tag->subcategory->name}}
+                                            @else
+                                                {{$post_tag->subcategory->name}}
+                                            @endif
+                                            
+                                            @endif
+                                        @endforeach
+                                    @endforeach
+                                    {{--@foreach($childcategory as $Key=>$child)
                                     @if($key==0)
                                     {{$child->name}}
                                     @else
                                     {{','.$child->name}}
                                     @endif
-                                    @endforeach
+                                    @endforeach--}}
                                 </textarea>
                         </td>
                         <td>
@@ -670,16 +718,15 @@
     row +=  '</td>';
 
     row+=   '<td>';
-    row+=   '<select class="form-control select2 subcat" id="procat" name="product_category_id[]" multiple="multiple" data-url="'+url+'" style="display:none;">';
-    row+=   '</select>';
+    row+=   '<textarea class="form-control scat" id="scat" name="product_category_id[]" rows="2" data-url="'+url+'" style="display:none;"></textarea>';
 
     row+= '<textarea class="form-control subcat" id="search_selected" name="product_category_name[]" rows="2" data-url="'+url+'" style="width: 100px;height: 82px;"></textarea>';
 
     row +=  '</td>';
 
     row+=   '<td>';
-    row+=   '<select class="form-control select2 prosubcat" id="prosubcat" name="product_subcategory_id[]" multiple="multiple" style="display:none;">';
-    row +=  '</select>';
+    row+=   '<textarea class="form-control proscat" id="search_selected" name="product_subcategory_id[]"  id="proscat" rows="2" data-url="'+url+'" style="display:none;"></textarea>';
+    
 
     row+= '<textarea class="form-control prosubcat" id="search_selected" name="product_subcategory_name[]"  id="prosubcat" rows="2" data-url="'+url+'" style="width: 100px;height: 82px;"></textarea>';
 
@@ -730,36 +777,61 @@
                         scope.find('.product_code').val(res.pro.product_code);
 
                         jQuery.each(res.pro.productcategory, function(index, value){
-
-                        var $cat = scope.find('.parentname').val(value.parentgroup.name);
-                        var $cat = scope.find('.parentcat').val(value.parentgroup.id);
+                            //console.log(value.parentgroup);
+                        var cat = scope.find('.parentname').val(value.parentgroup.name);
+                        var ppcat = scope.find('.parentcat').val(value.parentgroup.id);
                         });
 
-                        var $subcat=scope.find('.subcat');
-                        $subcat.find('option').remove();
+                        var subcat=scope.find('.subcat');
+                        subcat.find('option').remove();
                         
                         jQuery.each(res.procategories, function(index, value){
                             var parentcat=res.parentcat;
                             if(jQuery.inArray(value.id,parentcat)){
-                                $subcat.append($("<option value="+value.id+" selected='true'>"+value.name+"</option>")); 
+                                subcat.append($("<option value="+value.id+" selected='true'>"+value.name+"</option>")); 
                             }
                             });
 
-                        var $prosubcat=scope.find('.prosubcat');
-                        $prosubcat.find('option').remove();
+                        jQuery.each(res.parentcategory, function(index, value){
+                            //alert(index);
+                           
+                            if(index==0) {
+                                scope.find('.scat').append(value.id); 
+                                subcat.append(value.name); 
+                            }else{
+                                scope.find('.scat').append(','+value.id);
+                                subcat.append(','+value.name);
+                            }
+                        });
+
+                        var prosubcat=scope.find('.prosubcat');
+                        prosubcat.find('option').remove();
                         
                         jQuery.each(res.subcategories, function(index, value){
                             var subchildcat=res.subcat;
                             if(jQuery.inArray(value.id,subchildcat)){
-                                $prosubcat.append($("<option value="+value.id+" selected='true'>"+value.name+"</option>")); 
+                                prosubcat.append($("<option value="+value.id+" selected='true'>"+value.name+"</option>")); 
                             }
+                            });
+
+                        jQuery.each(res.childcategory, function(index, value){
+                        
+                                
+                                if (index==0) {
+                                    scope.find('.proscat').append(value.id);
+                                    prosubcat.append(value.name); 
+                                 }else{
+                                    scope.find('.proscat').append(','+value.id); 
+                                    prosubcat.append(','+value.name);
+                                 }
+                            
                             });
 
                         scope.find('.proname').val(res.pro.name);
 
                         scope.find('.spec').val(res.pro.model_details);
 
-                        var $uom = scope.find('.measurement');
+                        var uom = scope.find('.measurement');
                         //console.log($uom);
                         
                         //console.log(res.measurements);
@@ -767,10 +839,10 @@
                         jQuery.each(res.measurements, function(index, value){
                             
                             if(value.id == res.pro.measurement_id){ 
-                                $uom.append($("<option value="+value.id+" selected='selected'>"+value.name+"</option>"));
+                                uom.append($("<option value="+value.id+" selected='selected'>"+value.name+"</option>"));
                             }
                             else{
-                                $uom.append($("<option value="+value.id+">"+value.name+"</option>"));
+                                uom.append($("<option value="+value.id+">"+value.name+"</option>"));
                             }
                         });
                         scope.find('.imgval').val(res.pro.image);
@@ -979,17 +1051,18 @@
             //alert('gnjghjgh');
             var url=$(this).data('url');
             var id=$('#corpdetail option:selected').data('id');
-            console.log(url);
-            console.log(id);
+            //console.log(url);
+            //console.log(id);
              $.ajax({
                     url:url,
                     type:'GET',
                     data:{'id':id},
                     success:function(res){
-                        console.log(res);   
+                        console.log(res.corp.id);   
                         
                         $('.corpid').val(res.corp.id);
                         $('.corpcode').val(res.corp.corporate_code);
+                        $('.corpname').val(res.corp.first_name);
                         $('.corpcompany').val(res.corp.company_name);
 
                         $('.coemail').val(res.corp.email);

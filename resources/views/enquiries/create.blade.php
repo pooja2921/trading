@@ -482,7 +482,7 @@
                         <td>
                             
                             <input id="title" type="text" class="form-control proname" name="product_name[]" value="" placeholder="Enter  Product Name" style="width: 100px;">
-                            <input id="title" type="hidden" class="form-control product_code" name="product_code[]" value="" placeholder="Enter  Product Code" >
+                            <input type="hidden" class="form-control product_code" name="product_code[]" value="" >
                         </td>
                         <td>
                            
@@ -1211,22 +1211,12 @@
                         //console.log($uom);
                         uom.find('option').remove();
 
-                        var uomval=$('.measurement option:selected').val();
-                        console.log(uomval);
+                        /*var uomval=$('.measurement option:selected').val();
+                        console.log(uomval);*/
 
-                        var cusuom=$('.customeruom option:selected').val();
-                        console.log(cusuom);
+                        /*var cusuom=$('.customeruom option:selected').val();
+                        console.log(cusuom);*/
 
-                        if(cusuom!=uomval){
-                            scope.focus().css('color','red');
-                            scope.find('.parentname').focus().css('color','red');
-                            scope.find('.subcat').focus().css('color','red');
-                            scope.find('.prosubcat').focus().css('color','red');
-                            scope.find('.proname').focus().css('color','red');
-                            scope.find('.spec').focus().css('color','red');
-                            
-                            
-                        }
                         
                         jQuery.each(res.measurements, function(index, value){
                             //console.log(value.parentcategory.id);
@@ -1239,7 +1229,7 @@
                             }
                         });
 
-                        var uomval=$('.measurement option:selected').val();
+                       var uomval=$('.measurement option:selected').val();
                         console.log(uomval);
 
                         var cusuom=$('.customeruom option:selected').val();

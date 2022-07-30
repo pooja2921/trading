@@ -72,7 +72,7 @@ class EnquiryController extends Controller
      */
     public function store(Request $request)
     {
-       // return $request;
+        //return $request;
         
         $request['created_by_id']=auth()->user()->id;
         
@@ -104,6 +104,8 @@ class EnquiryController extends Controller
                 $enq['quantity'] = isset($request['quantity'][$i]) ? $request['quantity'][$i]:'';
 
                 $enq['product_name'] = isset($request['product_name'][$i]) ? $request['product_name'][$i]:'';
+
+                $enq['product_code'] = isset($request['product_code'][$i]) ? $request['product_code'][$i]:'';
 
                 $enq['product_id'] = isset($request['product_id'][$i]) ? $request['product_id'][$i]:'';
 
@@ -221,7 +223,7 @@ class EnquiryController extends Controller
         $countries=Country::get();
         $vendors=Vendor::where('id','!=','0')->get();
 
-          $enquiry=Enquiry::where('id',$id)->with('citydetail','enquirydetail')->first();
+           $enquiry=Enquiry::where('id',$id)->with('citydetail','enquirydetail')->first();
 
         $selected_tags = array();
         $parentcat = array();
@@ -239,6 +241,34 @@ class EnquiryController extends Controller
             }
             }
         }
+        //return $selected_tags;
+        /*$cat= Category::whereIN('id',$selected_tags)->select('id','name')->get();
+        
+        foreach($cat as $cat_name){
+            array_push($catname, $cat_name->name);
+        }*/
+
+        $catname = array();
+        foreach ($enquiry->enquirydetail as $pro) {
+           // return $pro;
+            foreach($pro->products as $product){
+                //return $product;
+                foreach($product->productcategory as $cat){
+                    array_push($catname,$cat->parentcategory->name);
+                }
+            }
+        }
+        //return $catname;
+         
+
+        /*foreach ($enquiry->enquirydetail as $pro) {*/
+           // return $pro;
+            /*foreach($pro->products as $product){
+                foreach($product->productcategory as $Key=>$post_tag){*/
+                    //$cat_n= implode(',',$catname);
+                /*}*/
+            /*}
+        }*/
 
         //return $selected_tags;
 
@@ -253,7 +283,7 @@ class EnquiryController extends Controller
         $procategories=Category::where('parent_id','!=','')->where('depth','1')->get();
         $subcategories=Category::where('parent_id','!=','')->where('depth','2')->get();
 
-        return view('enquiries.rfq',compact('user_id','measurements','enquiry','states','cities','vendors','progroup','parentcategory','childcategory','categories','user','procategories','subcategories','selected_tags','parentcat','subcat'));
+        return view('enquiries.rfq',compact('user_id','measurements','enquiry','states','cities','vendors','progroup','parentcategory','childcategory','categories','user','procategories','subcategories','selected_tags','parentcat','subcat','catname'));
     }
 
     public function childcategory(Request $request){
@@ -316,10 +346,10 @@ class EnquiryController extends Controller
             }
         }
 
-        //return $parentcat;
+        //return $selected_tags;
 
          //$progroup=  implode(',', $parentcat);
-        $progroup=Category::whereIN('id',$selected_tags)->select('id','name')->get();
+         $progroup=Category::whereIN('id',$selected_tags)->select('id','name')->get();
          $parentcategory=Category::whereIN('id',$parentcat)->select('id','name')->get();
         $childcategory=Category::whereIN('id',$subcat)->select('id','name')->get();
         
@@ -427,7 +457,7 @@ class EnquiryController extends Controller
         for($i = 0; $i< count($vendorid); $i++)
         {
 
-        $rfqven=VendorRfq::where('enquiry_id',$request->enquiry_id)->where('vendor_id',$vendorid[$i])->select('id','enquiry_id','vendor_id')->first();
+            $rfqven=VendorRfq::where('enquiry_id',$request->enquiry_id)->where('vendor_id',$vendorid[$i])->select('id','enquiry_id','vendor_id')->first();
         
     
                 if($rfqven==''){
@@ -494,15 +524,33 @@ class EnquiryController extends Controller
     public function update(Request $request, $id)
     {
         //return $request;
+
+        $selected= $request['product_group_id'];
+        $ven= implode(',',$selected);
+   
+        $proid = explode(',', $ven);
+
+        $pcat= $request['product_category_id'];
+        $pcategory= implode(',',$pcat);
+   
+        $pcatid = explode(',', $pcategory);
+
+        $pscat= $request['product_subcategory_id'];
+        $ps= implode(',',$pscat);
+   
+        $pscatid = explode(',', $ps);
+
         $request['created_by_id']=auth()->user()->id;
         
-        $enquiry=Enquiry::where('id',$id)->update($request->except('_token','_method','coun_code','client','countl_code','corpotate_address_line1','secondary_pincode','customer_product_description','customer_UOM','quantity','product_id','product_name','product_group_id','product_category_id','product_subcategory_id','product_subcategory_id','product_specification','UOM','image','product',
+         $enquiry=Enquiry::where('id',$id)->update($request->except('_token','_method','coun_code','client','countl_code','corpotate_address_line1','secondary_pincode','customer_product_description','customer_UOM','quantity','product_id','product_name','product_group_id','product_category_id','product_subcategory_id','product_subcategory_id','product_specification','UOM','image','product',
             'product_group','product_group_name','sub_category_id','product_category_name','product_subcategory_name'));
 
         if(isset($request['quantity'])){
+            EnquiryItem::where('enquiry_id',$id)->delete();
             for($i = 0; $i< count($request['quantity']); $i++)
             {
-                EnquiryItem::where('enquiry_id',$id)->delete();
+                //
+
                 $enq['enquiry_id'] = $id;
                 $enq['customer_product_description'] = $request['customer_product_description'][$i];
 
@@ -515,9 +563,9 @@ class EnquiryController extends Controller
 
                 $enq['product_group_id'] = isset($request['product_group_id'][$i]) ? $request['product_group_id'][$i]:'';
 
-                $enq['product_category_id'] = isset($request['product_category_id'][$i]) ? $request['product_category_id'][$i]:'';
+                //$enq['product_category_id'] = isset($request['product_category_id'][$i]) ? $request['product_category_id'][$i]:'';
 
-                $enq['product_subcategory_id'] = isset($request['product_subcategory_id'][$i]) ? $request['product_subcategory_id'][$i]:'' ;
+                //$enq['product_subcategory_id'] = isset($request['product_subcategory_id'][$i]) ? $request['product_subcategory_id'][$i]:'' ;
 
                 $enq['product_specification'] = $request['product_specification'][$i];
 
