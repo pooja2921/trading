@@ -105,7 +105,10 @@
                                           
                                             @if(in_array($cat->id,$parentcat))
                                                 <option value="{{$cat->id}}" selected="true" > {{$cat->name}}</option>
-                                            @endif 
+                                            @else
+                                                <option value="{{$cat->id}}">{{$cat->name}}</option> 
+                                            @endif  
+                                             
                                           @endforeach
                                           
                             
@@ -128,6 +131,9 @@
                                         </select>
                                     </div>
                                 </div>
+
+
+                                <textarea class="prduct_group_data" name="prduct_group_data" style="display:none;" ></textarea>
                                     
                                         <div class="col-sm-6">    
                                             <div class="form-group">
@@ -996,6 +1002,33 @@ var regex = /^(\+?\d{1,4}[\s-])?(?!0+\s+,?$)\d{10}\s*,?$/;
 
 });   
 
+    $(document).ready(function(){
+        var product=$("#progroup :selected").map((_, e) => e.value).get();
+            //console.log(product);
+            var publicurl= $('#progroup').data('url');
+            //console.log(publicurl);
+            $('.prduct_group_data').val('');
+            if(product!=''){
+                $.ajax({
+                    url:publicurl,
+                    type:'GET',
+                    data:{'id':product},
+                    success:function(data){
+                        //console.log(data);
+                        var row='';
+                        $('.prduct_group_data').val(JSON.stringify(data));
+                                row+='<option value=>Select Product Category</option>';
+                                jQuery.each(data, function(i, cat){
+                                row+='<option value='+cat['id']+'>'+cat['name']+'</option>';
+                                });
+                            $('.procategory').css('display','block');
+                            $('#procat').html(row);
+                    }
+                });
+            }
+    });
+
+
 
 $('#progroup').change(function() {
        
@@ -1004,6 +1037,7 @@ $('#progroup').change(function() {
             console.log(product);
             var publicurl= $(this).data('url');
             console.log(publicurl);
+            $('.prduct_group_data').val('');
             if(product!=''){
                 $.ajax({
                     url:publicurl,
@@ -1012,6 +1046,7 @@ $('#progroup').change(function() {
                     success:function(data){
                         console.log(data);
                         var row='';
+                        $('.prduct_group_data').val(JSON.stringify(data));
                                 row+='<option value=>Select Product Category</option>';
                                 jQuery.each(data, function(i, cat){
                                 row+='<option value='+cat['id']+'>'+cat['name']+'</option>';
@@ -1024,7 +1059,7 @@ $('#progroup').change(function() {
         });
 
         $('.subcat').change(function() { 
-            //console.log('gfbhngfgfh');
+            console.log('gfbhngfgfh');
             var sub=$(".subcat :selected").map((_, e) => e.value).get();
             console.log(sub);
             var publicurl= $('.subcat').data('url');
@@ -1042,6 +1077,7 @@ $('#progroup').change(function() {
                             row+='<option value="">Select Category</option>'; 
 
                             jQuery.each(data, function(i, subcat){
+                                //if(subcat.id==)
                             row+='<option value='+subcat['id']+'>'+subcat['name']+'</option>';
                             });
 

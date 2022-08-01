@@ -283,27 +283,40 @@ class EnquiryController extends Controller
         $procategories=Category::where('parent_id','!=','')->where('depth','1')->get();
         $subcategories=Category::where('parent_id','!=','')->where('depth','2')->get();
 
-        return view('enquiries.rfq',compact('user_id','measurements','enquiry','states','cities','vendors','progroup','parentcategory','childcategory','categories','user','procategories','subcategories','selected_tags','parentcat','subcat','catname'));
+        $rfqtovendor=RfqToVendor::where('enquiry_id',$id)->select('id','enquiry_id','vendor_id','product_id')->with('vendordetail')->get();
+
+
+        return view('enquiries.rfq',compact('user_id','measurements','enquiry','states','cities','vendors','progroup','parentcategory','childcategory','categories','user','procategories','subcategories','selected_tags','parentcat','subcat','catname','rfqtovendor'));
     }
 
     public function childcategory(Request $request){
         //return $request;
-         
-        $category =Category::whereIN('parent_id',$request->id)->select('id','name')->get();
-        return $category;
+        $vendor= DB::table('vendors')->rightjoin('vendor_categories','vendor_categories.vendor_id','=','vendors.id')->whereIN('vendor_categories.product_group_id',$request->progroup)->orwhere('vendors.state_id',$request->state)->orwhere('vendors.city_id',$request->city)->orwhereIN('vendor_categories.product_category_id',$request->procat)->orwhereIN('vendor_categories.sub_category_id',$request->subcat)->select('vendors.id','vendors.first_name','vendors.vendor_code')->groupBy('vendors.id')->get();/*->orwhereIN('vendor_categories.product_category_id',$request->procat)->orwhereIN('vendor_categories.sub_category_id',$request->subcat)*/ 
+        //$category =Category::whereIN('parent_id',$request->id)->select('id','name')->get();
+        return $vendor;
         
     }
 
     public function subcategory(Request $request){
         //return $request;
+        $vendor= DB::table('vendors')->rightjoin('vendor_categories','vendor_categories.vendor_id','=','vendors.id')->whereIN('vendor_categories.product_group_id',$request->progroup)->orwhere('vendors.state_id',$request->state)->orwhere('vendors.city_id',$request->city)->orwhereIN('vendor_categories.product_category_id',$request->id)->select('vendors.id','vendors.first_name','vendors.vendor_code')->groupBy('vendors.id')->get();
+        /*->orwhereIN('vendor_categories.sub_category_id',$request->subcat)*/
+
         $subcategory =Category::whereIN('parent_id',$request->id)->select('id','name','parent_id')->get();
-        return $subcategory;
+        //return $subcategory;
+        return \Response::json(['status'=>'success', 'message'=>'enquiry deleted successfully.','vendor'=>$vendor,'subcategory'=>$subcategory]);
+
     }
 
     public function searchvendor(Request $request){
         //return $request;
-        $vendor= DB::table('vendors')->join('vendor_categories','vendor_categories.vendor_id','=','vendors.id')->whereIN('vendor_categories.product_group_id',$request->progroup)->orwhere('vendors.state_id',$request->state)->orwhere('vendors.city_id',$request->city)->select('vendors.id','vendors.first_name','vendors.vendor_code')->get();/*->orwhereIN('vendor_categories.product_category_id',$request->procat)->orwhereIN('vendor_categories.sub_category_id',$request->subcat)*/
-        return $vendor;
+        $vendor= DB::table('vendors')->rightjoin('vendor_categories','vendor_categories.vendor_id','=','vendors.id')->whereIN('vendor_categories.product_group_id',$request->progroup)->orwhere('vendors.state_id',$request->state)->orwhere('vendors.city_id',$request->city)->select('vendors.id','vendors.first_name','vendors.vendor_code')->groupBy('vendors.id')->get();/*->orwhereIN('vendor_categories.product_category_id',$request->procat)->orwhereIN('vendor_categories.sub_category_id',$request->subcat)*/
+
+        $category =Category::whereIN('parent_id',$request->progroup)->select('id','name')->get();
+
+        return \Response::json(['status'=>'success', 'message'=>'enquiry deleted successfully.','vendor'=>$vendor,'category'=>$category]);
+
+        //return $vendor;
         
     }
 
@@ -362,19 +375,19 @@ class EnquiryController extends Controller
     //return $request;
             $selected= $request['vendorid'];
             $ven= implode(',',$selected);
-        //return $vendorid1='"'.implode('","',(array)$ven).'"';
-         //return $v=implode('"',$ven);
+            //return $vendorid1='"'.implode('","',(array)$ven).'"';
+            //return $v=implode('"',$ven);
                //$v=str_replace(',','","',$ven);
             $vendorid = explode(',', $ven);
             //$vendorid=[];
             //return $vendorid=$v;
 
 
-       //return $v=implode('"',$ven);
+            //return $v=implode('"',$ven);
           // $vendorid=array($v);
           //return preg_replace('/\\\\/', '', $v);
-        //return $vid= preg_replace(array(array(''), $vendorid);
-         /*foreach ($vendorid as $key => $val)
+            //return $vid= preg_replace(array(array(''), $vendorid);
+            /*foreach ($vendorid as $key => $val)
             {
                  return $venid = stripslashes($val);
             }*/
@@ -400,7 +413,7 @@ class EnquiryController extends Controller
              $request['rfq_number']=$clientCode;*/
              //return $request['vendorid'][0];
                 //$teststring = explode(',', $request['vendorid'][2]);
-//return $teststring[0];
+                //return $teststring[0];
             if(isset($selected)){
             for($i = 0; $i< count($selected); $i++)
             {
@@ -485,12 +498,6 @@ class EnquiryController extends Controller
                 } 
         }
             
-                
-        //return $rfq;
-        //return 
-
-        
-        
        
        return redirect()->back();
 

@@ -600,7 +600,7 @@
 
     row+= '<td>';
     row+= '<input type="hidden" id="product_id" name="product_id[]"  class="form-control product_id" placeholder="Product Id" >';
-    row+='<input id="title" type="hidden" class="form-control product_code" name="product_code[]" value="" placeholder="Enter  Product Code" >'
+    row+='<input id="title" type="hidden" class="form-control product_code" name="product_code[]" value="" placeholder="Enter  Product Code" >';
 
     row+='<input type="hidden" name="image[]" class="imgval">';
 
@@ -1254,6 +1254,26 @@
                     }
                 });
         });
+
+$('#customeruom').change(function(){
+    var scope=$(this);
+    var uomval=$('.measurement option:selected').val();
+    console.log(uomval);
+
+    var cusuom=$('.customeruom option:selected').val();
+    console.log(cusuom);
+
+     if(cusuom!=uomval){
+        console.log(scope.find('.parentname').html());
+        scope.find('.parentname').focus().css('color','red');
+        scope.find('.subcat').focus().css('color','red');
+        scope.find('.prosubcat').focus().css('color','red');
+        scope.find('.proname').focus().css('color','red');
+        scope.find('.spec').focus().css('color','red');
+        
+        
+    }
+});
 
     /*$('.customeruom').change(function(){
         var cusuom=$('.customeruom option:selected').val();

@@ -199,18 +199,7 @@ class VendorController extends Controller
         }
     }
 
-    public function getgroup($productgroupdata, $categoryid){
-        //return json_decode($productgroupdata)[0]->id;
-        //return $productcategoryid[0];
-        //return $productgroupdata.length();
-        //for($i=0;$i<count($productcategoryid);$i++){
-          for($j=0;$j<count(json_decode($productgroupdata));$j++){
-            if($categoryid==json_decode($productgroupdata)[$j]->id){
-                return json_decode($productgroupdata)[$j]->parent_id;
-            }
-          }  
-        //}
-    }
+    
 
     public function vendorsearch(Request $request){
        //return $request;
@@ -357,18 +346,18 @@ class VendorController extends Controller
              $request['second_city_code']='+'.$request['second_countl_code'].'-'.$request['second_city_code'];
         }
     
-            $vendor=Vendor::where('id',$id)->update($request->except('_token','_method','coun_code','second_coun_code','countl_code','product_group','altcount_code','second_altcount_code','second_countl_code','secondcity_code','second_count_code','product_group_id','product_category_id','sub_category_id'));
+            $vendor=Vendor::where('id',$id)->update($request->except('_token','_method','coun_code','second_coun_code','countl_code','product_group','altcount_code','second_altcount_code','second_countl_code','secondcity_code','second_count_code','product_group_id','product_category_id','sub_category_id','prduct_group_data'));
 
-            if(isset($request['product_group_id'])){
+            if(isset($request['product_category_id'])){
 
                 VendorCategory::where('vendor_id',$id)->delete();
                 
-                for($i = 0; $i< count($request['sub_category_id']); $i++)
+                for($i = 0; $i< count($request['product_category_id']); $i++)
                 {
                     $category['vendor_id'] = $id;
-                    $category['product_group_id'] = $request['product_group_id'][$i];
+                    $category['product_group_id'] = $this->getgroup($request['prduct_group_data'],$request['product_category_id'][$i]);
                     $category['product_category_id'] = $request['product_category_id'][$i];
-                    $category['sub_category_id'] = $request['sub_category_id'][$i];
+                    //$category['sub_category_id'] = $request['sub_category_id'][$i];
                     //return $category;
                     VendorCategory::create($category);
                 }
@@ -380,6 +369,19 @@ class VendorController extends Controller
         {
             return \Response::json(["status"=>"error", "message"=> $e->getMessage()]);
         }
+    }
+
+    public function getgroup($productgroupdata, $categoryid){
+        //return json_decode($productgroupdata)[0]->id;
+        //return $productcategoryid[0];
+        //return $productgroupdata.length();
+        //for($i=0;$i<count($productcategoryid);$i++){
+          for($j=0;$j<count(json_decode($productgroupdata));$j++){
+            if($categoryid==json_decode($productgroupdata)[$j]->id){
+                return json_decode($productgroupdata)[$j]->parent_id;
+            }
+          }  
+        //}
     }
 
     /**

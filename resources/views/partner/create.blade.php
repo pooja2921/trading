@@ -115,7 +115,7 @@
                                     <div class="col-sm-6 subcategory" style="display:none;">
 
                                         <div class="form-group">
-                                        <label class="d-block">Sub Category<span class="text-red">*</span></label>
+                                        <label class="d-block">Sub Category</label>
                                           
                                         <select  class="form-control select2" id="subcat" name="sub_category_id[]"  multiple="multiple">
                                         </select>
@@ -535,7 +535,7 @@
                                                 <option value="{{$state->id}}">{{$state->name}}</option> 
                                              @endforeach
                                         
-                                        </select>
+                                    </select>
                                     
                                 </div>
                             </div>

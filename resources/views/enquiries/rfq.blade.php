@@ -169,10 +169,11 @@
 
                             <td></td>
                             <td>
+                                @if(isset($rfqtovendor) && $rfqtovendor =='[]')
                                 <div>
                                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#exampleModalCenter">{{ __('Select Supply Partner')}}</button>
                                 </div>
-
+                                @endif
                                 <div style="display:none;">
                                     <input type="hidden" class="form-control" name="enquiry_item_id[]"  value="{{isset($detail['id']) ? $detail['id']:''}}">
 
@@ -182,7 +183,16 @@
 
                                 </div>
 
-                                <textarea class="form-control enqvendor vendorcode_{{$key+1}}" name="vendor_code[]" rows="2" style="margin-top: 10px;"></textarea>
+                                <textarea class="form-control enqvendor vendorcode_{{$key+1}}" name="vendor_code[]" rows="2" style="margin-top: 10px;width: 125px;height: 82px;">
+                                    @foreach($rfqtovendor as $rfqven)
+
+                                    @foreach($rfqven->vendordetail as $vendor)
+                                        @if($rfqven['product_id']==$detail['product_id'])
+                                        {{$vendor->vendor_code}}
+                                        @endif
+                                    @endforeach
+                                    @endforeach
+                                </textarea>
                             </td>
                             <td>
                                 <textarea class="form-control" id="search_selected" name="customer_product_description[]" rows="2"     style="width: 125px;height: 82px;">{{isset($detail['customer_product_description']) ? $detail['customer_product_description']:''}}</textarea>
@@ -376,7 +386,8 @@
                 
             </div>
 
-
+            @if(isset($rfqtovendor) && $rfqtovendor =='[]')
+            
             <div class="row">
                 <!-- start message area-->
                 
@@ -393,6 +404,8 @@
                     </div>
                 </div>
             </div>
+
+            @endif
 
 
         
@@ -441,7 +454,7 @@
                             <div class="form-group">
                                     
                                 <label class="d-block">Product Category</label>
-                                <select class="form-control  subcat select2" id="procat" name="product_category_id[]" data-url="{{url('/')}}" multiple="multiple" >
+                                <select class="form-control  subcat" id="procat" name="product_category_id[]" data-url="{{url('/')}}"  >
                                     <option value="0"></option>
                                 </select>
                             </div>
@@ -453,7 +466,7 @@
                             <div class="form-group">
                                 <label class="d-block">Product Sub Category</label>
                                   
-                                <select  class="form-control child select2" id="subcat" name="sub_category_id[]"  data-url="{{url('/')}}" multiple="multiple">
+                                <select  class="form-control child " id="subcat" name="sub_category_id[]"  data-url="{{url('/')}}">
                                     <option value="0"></option>
                                 </select>
                             </div>
@@ -565,13 +578,13 @@
         $('.productgroup').change(function() {
         
             var progroup=$(".productgroup :selected").map((_, e) => e.value).get();
-            console.log(progroup);
+            //console.log(progroup);
             var state=$('#tradestate').val();
-            console.log(state);
+            //console.log(state);
             var city=$('#tradecity').val();
-            console.log(city);
+            //console.log(city);
             var publicurl= $(this).data('url');
-            console.log(publicurl);
+            //console.log(publicurl);
             //$('.productgroup').html('');
             //$('.subcat').html('');
             //$('.subcat').removeData();
@@ -581,28 +594,29 @@
                     type:'GET',
                     data:{'progroup':progroup,'state':state,'city':city},
                     success:function(data){
-                        console.log(data);
+                        //console.log(data.vendor);
                         var row='';
                         row+='<option value="">Select Supply Partner</option>'; 
 
-                            jQuery.each(data, function(i, vendor){
+                            jQuery.each(data.vendor, function(i, vendors){
                                 
                                // $('.vendor_code').val(vendor['vendor_code']);
-                            row+='<option value='+vendor['id']+' code='+vendor['vendor_code']+'>'+vendor['first_name']+'</option>';
+                            row+='<option value='+vendors['id']+' code='+vendors['vendor_code']+'>'+vendors['first_name']+'</option>';
                             });
 
-                            //$('.subcategory').css('display','block');
-                            $('.tradevendor').html(row);
+                            
+                            var cate='';
 
-                                /*row+='<option value=>Select Product Category</option>';
-                                jQuery.each(data, function(i, cat){
-                                row+='<option value='+cat['id']+'>'+cat['name']+'</option>';
+                                cate+='<option value=>Select Product Category</option>';
+                                jQuery.each(data.category, function(i, cat){
+                                cate+='<option value='+cat['id']+'>'+cat['name']+'</option>';
                                 });
                                 //console.log(row);
                             $('.procategory').css('display','block');
                             //console.log($('#procat').html());
-
-                            $('.subcat').html(row);*/
+                            //$('.subcategory').css('display','block');
+                            $('.subcat').html(cate);
+                            $('.tradevendor').html(row);
                     }
                 });
                 //row+='<option value="0"></option>';
@@ -611,8 +625,14 @@
 
         $('.procategory').change(function() { 
             //console.log('gfbhngfgfh');
+            var progroup=$(".productgroup :selected").map((_, e) => e.value).get();
+            //console.log(progroup);
+            var state=$('#tradestate').val();
+            //console.log(state);
+            var city=$('#tradecity').val();
+            //console.log(city);
             var sub=$(".procategory :selected").map((_, e) => e.value).get();
-            //console.log(parent);
+            //console.log(sub);
             var publicurl= $('.subcat').data('url');
             //console.log(publicurl);
             //$('.procategory :selected').remove();
@@ -622,20 +642,30 @@
                 $.ajax({
                     url:publicurl+'/subcategory',
                     type:'GET',
-                    data:{'id':sub},
+                    data:{'id':sub,'progroup':progroup,'state':state,'city':city},
                     success:function(data){
                         //$('.child').html('');
                         //console.log(data);
                         var row='';
+                        row+='<option value="">Select Supply Partner</option>'; 
 
-                            row+='<option value="">Select Category</option>'; 
+                            jQuery.each(data.vendor, function(i, vendors){
+                                
+                               // $('.vendor_code').val(vendor['vendor_code']);
+                            row+='<option value='+vendors['id']+' code='+vendors['vendor_code']+'>'+vendors['first_name']+'</option>';
+                            });
 
-                            jQuery.each(data, function(i, subcat){
-                            row+='<option value='+subcat['id']+'>'+subcat['name']+'</option>';
+                        var cate='';
+
+                            cate+='<option value="">Select Category</option>'; 
+
+                            jQuery.each(data.subcategory, function(i, subcat){
+                            cate+='<option value='+subcat['id']+'>'+subcat['name']+'</option>';
                             });
 
                             $('.subcategory').css('display','block');
-                            $('.child').html(row);
+                            $('.child').html(cate);
+                            $('.tradevendor').html(row);
                             //row+='<option value="0"></option>';
                     }
                 });
@@ -663,7 +693,7 @@
             //console.log(publicurl);
 
             $.ajax({
-                    url:publicurl+'/searchvendor',
+                    url:publicurl+'/childcategory',
                     type:'GET',
                     data:{'progroup':progroup,'procat':procat,'subcat':subcat,'state':state,'city':city},
                     success:function(data){

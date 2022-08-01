@@ -603,7 +603,7 @@
         </div>
 
 
-            <div class="row">
+            {{--<div class="row">
                 <!-- start message area-->
                 
                 <!-- end message area-->
@@ -618,7 +618,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>--}}
 
 
         </form>

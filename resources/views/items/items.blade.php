@@ -134,8 +134,10 @@
                                             <td>
                                                 @foreach($item->productcategory as $cat)
                                                 @if($cat->parentgroup->id==$cat->product_group_id)
+                                                @if ($loop->first)
 
                                                 {{ isset($cat->parentgroup->name) ? $cat->parentgroup->name :'' }}
+                                                @endif
                                                 @endif
                                                 @endforeach
                                             </td>
